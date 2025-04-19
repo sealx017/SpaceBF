@@ -1,0 +1,24 @@
+Package: SpaceBF
+Type: Package
+Title:  Bayesian Framework for bivariate spatially varying interaction
+Version: 0.1.0
+Author: Souvik Seal 
+Maintainer: Souvik Seal <sealso@musc.edu>
+Description: The package can be used for spatially varying interaction between two variables
+Imports: 
+ Matrix,
+ igraph,
+ MERINGUE,
+ ggplot2,
+ circlize,
+ RColorBrewer,
+ ggraph,
+ latex2exp,
+ patchwork
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+NeedsCompilation: no
+Packaged: 2025-04-20 00:19:07 UTC; sealso
+Depends: R (>= 3.5.0)
