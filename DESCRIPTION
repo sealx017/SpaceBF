@@ -7,6 +7,9 @@ Maintainer: Souvik Seal <sealso@musc.edu>
 Description: The package can be used for spatially varying interaction between two variables
 Imports: 
  Matrix,
+ spam,
+ coda,
+ fossil,
  igraph,
  MERINGUE,
  ggplot2,
@@ -14,7 +17,9 @@ Imports:
  RColorBrewer,
  ggraph,
  latex2exp,
- patchwork
+ patchwork,
+ spdep,
+ sf
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

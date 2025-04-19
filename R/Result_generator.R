@@ -84,16 +84,23 @@ local_res <- function(Beta, summary = "median", local.p.ths = 0.95){
   return(local_res)
 }
 
-
+#' @import RColorBrewer
+#' @import ggplot2
+#' @import circlize
+#' @import latex2exp
+#' @import patchwork
+#' @import sf
 #' @title Generates plots of the estimated slope surface along with the expression profiles
 #'
 #' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
 #' @param y1 is the expression vector of gene 1
 #' @param y2 is the expression vector of gene 2
 #' @param coords is the 2D matrix of xy coordinates
+#' @param which.model denotes the model to be used, "NB" or "Gaussian"
 #' @param beta_ths is the threshold to hide extreme values of betas
 #' @param exp_ths_min is the minimum value of the expression profiles
 #' @param exp_ths_max is the maximum value of the expression profiles
+#' @param local.p.ths is the size of the credible interval
 #' @return a ggplot object with 4 sub-figures, including expression of y1 and y2, 
 #' and estimated "z-score"-type beta surface and its truncated version based on local significant
 #' @export
@@ -101,8 +108,9 @@ local_res <- function(Beta, summary = "median", local.p.ths = 0.95){
 
 
 
-plot_estimates <- function(Beta, y1, y2, coords, beta_ths = 1.9,
-                           exp_ths_min = 0, exp_ths_max = 2)
+plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB", 
+                  beta_ths = 1.9, exp_ths_min = 0, exp_ths_max = 2,
+                  local.p.ths = 0.9)
 {
   
   if(which.model == "NB"){
@@ -113,15 +121,15 @@ plot_estimates <- function(Beta, y1, y2, coords, beta_ths = 1.9,
   colnames(location_data_with_beta) <- c("x", "y", "y1", "y2")
   
   location_data_with_beta$beta <- colMeans(Beta)
-  sigfinder <- local_credible(Beta, p.ths = 0.95)
+  sigfinder <- local_credible(Beta, p.ths = local.p.ths)
   
   p.sf<- sf::st_as_sf(location_data_with_beta, coords = c("x", "y"))
   
   mean_beta <- round(mean(p.sf$beta), 3)                    # mean of the beta estimates
   SD_beta <- round(sd(p.sf$beta), 3)                        # SD of the beta estimates
    
-  p.sf$beta <- scale(p.sf$beta, scale = T)[,1]             # plot the z-scores for interpretability
-  p.sf$beta <- pmax(pmin(p.sf$beta, beta_ths), -beta_ths)  # trimming outliers
+  p.sf$beta <- scale(p.sf$beta, scale = T)[,1]              # plot the z-scores for interpretability
+  p.sf$beta <- pmax(pmin(p.sf$beta, beta_ths), -beta_ths)   # trimming outliers
   
   myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
   sc_LH <- scale_colour_gradientn(colours = myPalette(10), 
@@ -160,26 +168,26 @@ plot_estimates <- function(Beta, y1, y2, coords, beta_ths = 1.9,
   p1 <- ggplot(data =  p.sf) +
     geom_sf(aes(color = y1), size = 0.5) +   
     scale_color_gradientn(colours = (viridis::viridis(10)), 
-    limits=c(exp_ths_min, exp_ths_max)) +
+    limits = c(exp_ths_min, exp_ths_max)) +
     labs(color = ifelse(which.model == "NB", "log1p(expr)", "expr")) + 
-    ggtitle(paste0("Gene: 1"))+
-    theme(axis.text = element_blank(), axis.ticks = element_blank(), 
-          legend.position="left", legend.text=element_text(size=9), 
-          legend.title = element_text(size=10),
-          legend.key.size = unit(0.5, 'cm'),
-          plot.title = element_text(hjust = 0.5, size = 12))
+    ggtitle(paste0("Gene: 1")) +
+      theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+      legend.position="left", legend.text=element_text(size=9), 
+      legend.title = element_text(size=10),
+      legend.key.size = unit(0.5, 'cm'),
+      plot.title = element_text(hjust = 0.5, size = 12))
   
   p2 <- ggplot(data =  p.sf) +
     geom_sf(aes(color = y2), size = 0.5) +   
     scale_color_gradientn(colours = (viridis::viridis(10)), 
-    limits=c(exp_ths_min, exp_ths_max)) +
+    limits = c(exp_ths_min, exp_ths_max)) +
     labs(color = ifelse(which.model == "NB", "log1p(expr)", "expr")) + 
-    ggtitle(paste0("Gene: 2"))+
+    ggtitle(paste0("Gene: 2")) +
     theme(axis.text = element_blank(), axis.ticks = element_blank(), 
-          legend.position="none", legend.text=element_text(size=8), 
-          legend.title = element_text(size=10),
-          legend.key.size = unit(0.5, 'cm'),
-          plot.title = element_text(hjust = 0.5, size = 12))
+      legend.position="none", legend.text=element_text(size=8), 
+      legend.title = element_text(size=10),
+      legend.key.size = unit(0.5, 'cm'),
+      plot.title = element_text(hjust = 0.5, size = 12))
   
   all_plots = wrap_plots(list(p1, p2, betas, betas2))
   return(all_plots)

@@ -32,6 +32,7 @@ We install and load the developmental version of SpaceBF from GitHub.
 ```{r loading packages, message=FALSE}
 
 #suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
+#install.packages("SpaceBF")
 library(SpaceBF)
 
 # # packages providing functional help
@@ -80,7 +81,7 @@ K <- kernel_mat(x, l = 7.2, type = "exponential")
 
 # visualizing the kernel function to get an idea about spatial structure
 palettes <-  sort(hcl.pals("divergingx"))
-col_fun <- colorRamp2(c(0, 0.5, 1), hcl_palette = palettes[15], reverse = T) # spectral palette
+col_fun <- circlize::colorRamp2(c(0, 0.5, 1), hcl_palette = palettes[15], reverse = T) # spectral palette
 ComplexHeatmap::Heatmap(K, cluster_rows = F, cluster_columns = F, col = 
   col_fun, show_row_names = FALSE,  show_column_names = FALSE, 
   heatmap_legend_param = list(title = "value"))
@@ -113,7 +114,7 @@ The main function "SpaceBF" fits both the negative binomial (which.model = "NB")
 
 
 ```{r fit SpaceBF NB model, echo = T, results = T}
-MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 50)
+MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 500)
 ```
 
 ## Perform significance tests
@@ -128,7 +129,7 @@ L_results <- local_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
 Display the -log10 of the p-values using heatmap.
 
 ```{r P-value visualization,  out.width="50%"}
-plot_estimates(MM$Beta[, -c(1:N)], y1, y2, coords, beta_ths = 1.9, exp_ths_min = 0, exp_ths_max = 2)
+plot_estimates(MM$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
 ```
 
@@ -145,16 +146,6 @@ We notice that the spatial co-occurrence of alpha and delta cells is positive in
 # 
 # # Pair: (alpha, delta)
 # Plot.functions(Functional_results, pair = c("alpha", "delta"), Fvals = Pointwise_Fvals)
-
-```
-
-### Pair: (beta, Th)
-
-We notice that the spatial co-occurrence of (beta, Th) is negative in both the groups meaning that the cell types avoid each other. But the degree of avoidance decreases in the "Onset" group.
-
-```{r plotting summary functions 2,  out.width="100%", out.height = "80%"}
-# # Pair: (beta, Tc)
-# Plot.functions(Functional_results, pair = c("beta", "Tc"), Fvals = Pointwise_Fvals)
 
 ```
 

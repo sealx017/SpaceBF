@@ -1,3 +1,4 @@
+#' @import Matrix
 #' @title Function for the Gaussian fused model
 #'
 #' @param y1 is the expression vector of gene 1, gene 1 will be regressed on gene 2

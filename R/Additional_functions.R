@@ -26,6 +26,9 @@ MST_construction <- function(x, type = "random"){
   return(list(mstobj, type))
 }
 
+#' @import igraph
+#' @import ggraph
+#' @import ggplot2
 #' @title Function for plotting the MST 
 #'
 #' @param mst_out is the list output from function MST_construction
@@ -50,7 +53,8 @@ print_mst <- function(mst_out, coords, title.hjust = 0.5, title.size = 10, node.
     geom_edge_link(edge_colour = "grey40") + 
     geom_node_point(size = node.size) +
     ggtitle(ifelse(type == "random", "Random MST", "MST")) +
-    theme(plot.title = element_text(hjust = title.hjust, size = title.size))
+    theme(plot.title = element_text(hjust = title.hjust, 
+          size = title.size))
   
   print(mstgraph)
 }
