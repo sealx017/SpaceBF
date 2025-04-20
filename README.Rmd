@@ -24,60 +24,56 @@ knitr::opts_chunk$set(
 )
 ```
 
-This *R* package implements the models proposed in the paper "SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches in Spatial Omics Datasets." It enables the analysis of spatially varying co-expression between pairs of molecules, such as ligand-receptor interactions, in spatial transcriptomics (ST) and mass spectrometry imaging (MSI) datasets. It is applicable to broader spatial datasets as well, to study spatially varying interaction between any two variables. 
+The *R* package implements the models proposed in the manuscript "SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches in Spatial Omics Datasets." It enables the analysis of spatially varying co-expression between pairs of molecules, such as ligand-receptor interactions, in spatial transcriptomics (ST) and mass spectrometry imaging (MSI) datasets. It is easily applicable to broader spatial datasets, to study spatially varying interaction between any two variables. 
 
-## Load the packages
+## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub.
 ```{r loading packages, message=FALSE}
 
-#suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
-#install.packages("SpaceBF")
-library(SpaceBF)
-
+suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
+suppressWarnings(library(SpaceBF))
 # # packages providing functional help
-# library(Matrix)
-# library(igraph)
-# library(MERINGUE)
+# library(Matrix); library(igraph);  library(sf)
+# library(fossil); library(coda); library(MERINGUE); library(SpaGene);
 # 
 # # packages providing plotting help
-# library(ggplot2)
-# library(circlize)
-# library(RColorBrewer)
-# library(ggraph)
-# library(latex2exp)
-# library(patchwork)
+# library(ggplot2); library(circlize); library(RColorBrewer)
+# library(ggraph); library(latex2exp); library(patchwork);
+# library(ComplexHeatmap)
 
 ```
 
-## Load the coordinates of the Melanoma dataset and compute the MST
+## Load the coordinates of the example dataset and compute MST
+
+We load the spatial coordinates from the melanoma dataset [2]. The data.frame has three columns: x, y coordinates, and celltypes detected by the RCTD software. Then, we construct the mninimum spanning tree (MST) based on the Euclidean distance, and visualize it. 
 
 ```{r loading the coords, out.width = "50%"}
 data("mela_coords") # three columns corresponding to xy coordinates and celltypes
-
-# compute Euclidean distance matrix and construct MST
 coords <- mela_coords
-x <- dist(coords[, 1:2]) # consider xy coordinates only
-N <- nrow(coords)        # number of locations
-mst.out <- MST_construction(x, type = "random")
-mst.adjmat <- mst.out[[1]]
+
+# compute Euclidean distance matrix x and construct the MST
+dist_mat <- dist(coords[, 1:2]) # consider xy coordinates only
+N <- nrow(coords)               # number of locations
+mst.out <- MST_construction(dist_mat, type = "random") 
+mst.adjmat <- mst.out[[1]]      # MST adjacency matrix, to be used as G in the main function later
 print_mst(mst.out, coords[, 1:2])
 
 # optional network to compute MERINGUE cross-correlation
-#w <- getSpatialNeighbors(coords[, 1:2], filterDist = 5) # constructing Delauney netwrok 
-                                                         # using  MERINGUE
-#plotNetwork(coords[, 1:2], w)
+w <- MERINGUE::getSpatialNeighbors(coords[, 1:2], filterDist = 5) # constructing Delauney network using  MERINGUE
+# plotNetwork(coords[, 1:2], w)
 ```
 
 
 
 ## Construct the kernel covariance matrix
 
-This function can be used to perform the entire analysis at one go, starting from summary function estimation to the univariate and multivariate FANOVA-based association analyses. 
+We construct a kernel covariance matrix *K* based on the exponential kernel function (type = "exponential" or "RBF") for length-scale *l* = 7.2. Increasing *l* strengthens the spatial dependency between the points. We visualize *K* using heatmap.
+
 ```{r construct kernel matrix, out.width = "50%"}
 
 # spatial kernel covariance matrix with exponential kernel function
-K <- kernel_mat(x, l = 7.2, type = "exponential") 
+K <- kernel_mat(dist_mat, l = 7.2, type = "exponential") 
 
 # visualizing the kernel function to get an idea about spatial structure
 palettes <-  sort(hcl.pals("divergingx"))
@@ -90,13 +86,17 @@ ComplexHeatmap::Heatmap(K, cluster_rows = F, cluster_columns = F, col =
 
 ## Simulate count expression data using bivariate Gaussian copula
 
+Then we simulate two spatially correlated NB random vectors *y1* and *y2* using the simulation design 2 as outlined in the manuscript [1].
+The parameter *nu* controls the degree of bivariate association as it appears as a correlation coeffecient in the Kronecker product-based covariance matrix. 
+
 ```{r simulate count data, out.width = "50%"}
-set.seed(2025*2)
+set.seed(2025*2025)
 
 # generate bivariate Gaussian data across space: (y1, y2)^T, y1, y2 are N x 1
-nu = 0.5                                          # correlation term 
+nu = 0.5            # correlation term is highly positive, making it 0 should give us NULL results 
+
 y_latent_both <- c(MASS::mvrnorm(1, rep(0, 2*N), 
-kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) #kronecker product sturcture
+kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) #Kronecker product sturcture
 
 y1_latent <- y_latent_both[1:N]; y2_latent <- y_latent_both[-c(1:N)]
 U1 = pnorm(y1_latent); U2 = pnorm(y2_latent) # transformation using the CDF of standard normal
@@ -109,60 +109,85 @@ y2 <- qnbinom(U2, r2, NB_q2)
 
 ```
 
+## Fit the NB or Gaussian model (y1 on y2)
 
-The main function "SpaceBF" fits both the negative binomial (which.model = "NB") and Gaussian (which.model = "Gauss") models. The arguments y1 and y2 should correspond to the cell/location-level expression vector of two genes (regressing y1 on y2). X denotes the matrix of additional cell-level covariates. G denotes the MST graph adjacency matrix. nIter denotes the number of MCMC iterations. 
+The main function "SpaceBF" fits both the negative binomial (which.model = "NB") and Gaussian (which.model = "Gauss") models. The arguments *y1* and *y2* should correspond to the cell/location-level  *N x 1* expression vector of two genes (regressing *y1* on *y2*). *X* denotes the matrix of additional cell-level covariates (dimension *p*). *G* denotes the MST graph adjacency matrix (*N x N*). *nIter* denotes the number of MCMC iterations. 
 
 
 ```{r fit SpaceBF NB model, echo = T, results = T}
-MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 500)
+MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000)  # decrease nIter for quicker results
+print(str(MM)) # check the returned list object
+```
+
+## MCMC convergence plots
+
+The above function returns a list of several objects, including a matrix of beta estimates, with dimension *nIter x (2N + p)*. The last *N* columns correspond to the slope estimates at *N* locations. We randomly select 4 of these locations, and check the slope convergence plots. 
+
+
+```{r MCMC diagnostic plots, echo = T, results = T,  out.width = "100%"}
+set.seed(2025*2025)
+
+ran_sam = sample(1:N, 4)
+par(mfrow = c(2, 2))
+MCMC_plot(MM$Beta[, (N + ran_sam[1])])
+MCMC_plot(MM$Beta[, (N + ran_sam[2])])
+MCMC_plot(MM$Beta[, (N + ran_sam[3])])
+MCMC_plot(MM$Beta[, (N + ran_sam[4])])
+
 ```
 
 ## Perform significance tests
-Perform global and local-level hypothesis tests using *bayestestR*. 
+
+From the fitted model, perform global and local-level hypothesis tests using the *R* package *bayestestR*. The function "global_res" provides the global results, with a global summary estimate of slope (mean or median), global *p*-value, # locations where the local CI does not contain 0, and Geweke convergence-diagonstic score. The function "local_res" provides the location-level significance results in a similar format. 
 
 ```{r Global and local p-value extraction}
-G_results <- global_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
-L_results <- local_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
+G_results <- global_res(MM$Beta[, -c(1:N)], summary = "median", local.p.ths = 0.9)
+print(G_results)  # test should be significant if nu is highly +ve or -ve
+
+
+L_results <- local_res(MM$Beta[, -c(1:N)],  local.p.ths = 0.9)
+print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 ```
 
-## Heatmap of -log10 of p-values 
-Display the -log10 of the p-values using heatmap.
+## Visualize the estimated slope surface along with th expression profiles
 
-```{r P-value visualization,  out.width="50%"}
+Display the expression of *y1* and *y2* across the spatial locations along the estimated slope (in a *z*-score type format, i.e., scaled by mean and SD). In the last sub-figure, locations where the local test produced a *p*-value > 0.9 are greyed.
+
+```{r p-value visualization,  out.width="50%"}
 plot_estimates(MM$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
 ```
 
-## Visualizing summary functions
-Next, we can check the summary functions corresponding to those pairs of cell types whose p-values turned out to be significant. Here, we visualize the g-functions of pairs: (alpha, delta) and (beta, Th). For every pair, the first panel shows subject-level mean functions (averaged across the images of a subject), while the second panel shows image-level summary functions. We also display the point-wise F-values which might help to understand which particular values of the radius r are most influential, i.e., where the maximum difference between the group-level summary functions are observed. 
+## Use of other methods
 
-### Pair: (alpha, delta)
+Check three other global methods: Pearson's correlation, MERINGUE, and SpaGene.
 
-We notice that the spatial co-occurrence of alpha and delta cells is positive in both the groups but higher in the "Onset" group.
+```{r other methods,  out.width="50%"}
 
-```{r plotting summary functions 1,  out.width="100%", out.height = "80%"}
-# Pointwise_Fvals = Final_result[[1]][[2]]
-# Functional_results = Final_result[[2]]
-# 
-# # Pair: (alpha, delta)
-# Plot.functions(Functional_results, pair = c("alpha", "delta"), Fvals = Pointwise_Fvals)
+# Pearson's correlation
+print(cor.test(y1, y2))
+
+# MERINGUE cross-correlation
+names(y1) <- names(y2) <- rownames(w)
+Scorr_test <- MERINGUE::spatialCrossCor(y1, y2, w)
+Scorr_pval <- MERINGUE::spatialCrossCorTest(log(y1+1), 
+              log(y2+1), w, n = 2000, plot=F)
+print(list(MERINGUE_statistic = Scorr_test, MERINGUE_pvalue = Scorr_pval))
+      
+# SpaGene
+st_meta = cbind.data.frame(as.character(1:N), coords[, 1:2])
+colnames(st_meta) = c("cell", "x", "y")
+st_data = rbind.data.frame(log(y1+1), log(y2+1))
+rownames(st_data) = c("y1", "y2")
+colnames(st_data) = as.character(1:N)
+st_data = as.matrix(st_data)
+      
+SG <- SpaGene::SpaGene_LR(st_data, st_meta[,-1],  
+          LRpair = matrix(c("y1","y2"), 1, 2), knn = 4, 
+          normalize = F) 
+print(SG)
 
 ```
-
-## Visualizing cellular organization
-
-We can visualize cellular organization in different images of every subject. Here, 4 images each are shown for two subjects, "6126" from group "Non-diabetic" and "6414" from group "Onset". 
-
-```{r plotting celluar organization,  out.width="100%", out.height = "700px"}
-# table(IMC_T1DM$cellType)
-# palette = c("darkorchid1","red", "cyan", "grey", "blue", "green") #assign colors to cell types 
-# 
-# Plot.cellTypes(data = IMC_T1DM, ID = "6126", palette = palette)
-# Plot.cellTypes(data = IMC_T1DM, ID = "6414", palette = palette)
-
-```
-
-
 ## References
 
 1\) Seal, S., & Neelon, B. (2025). SpaceBF: Spatial coexpression analysis using Bayesian Fused approaches in spatial omics datasets. bioRxiv, 2025-03.

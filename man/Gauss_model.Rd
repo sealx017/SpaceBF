@@ -37,7 +37,7 @@ Gauss_model(
 \item{verbose}{is TRUE or FALSE, to show or suppress progression updates}
 }
 \value{
-It returns the estimated beta's, r, shrinkage parameters, and deviance
+It returns the estimated beta's, sigma, shrinkage parameters, and deviance
 }
 \description{
 Function for the Gaussian fused model

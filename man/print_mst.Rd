@@ -18,7 +18,7 @@ print_mst(mst_out, coords, title.hjust = 0.5, title.size = 10, node.size = 1)
 \item{node.size}{denotes the size of each node/location of the MST}
 }
 \value{
-To visualize the MST
+The MST plot
 }
 \description{
 Function for plotting the MST

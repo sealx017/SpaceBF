@@ -40,7 +40,7 @@ SpaceBF(
 \item{verbose}{is TRUE or FALSE, to show or suppress progression updates}
 }
 \value{
-It returns the estimated beta's, r, shrinkage parameters, and deviance
+It returns the estimated beta's, r or sigma, shrinkage parameters, and deviance
 }
 \description{
 Main parent function for fitting different models

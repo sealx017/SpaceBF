@@ -2,18 +2,18 @@
 % Please edit documentation in R/Result_generator.R
 \name{local_credible}
 \alias{local_credible}
-\title{Local-level or cell-specific credible interval}
+\title{Local-level or cell-specific credible interval (CI)}
 \usage{
-local_credible(Beta, p.ths = 0.95)
+local_credible(Beta, local.p.ths = 0.9)
 }
 \arguments{
 \item{Beta}{is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations}
 
-\item{p.ths}{is the size of the credible interval}
+\item{local.p.ths}{is the size of the CI for each location}
 }
 \value{
-a heatmap object from the pheatmap package.
+a N x 1 vector of 0/1, depending on the CI for a location contains 0 or not.
 }
 \description{
-Local-level or cell-specific credible interval
+Local-level or cell-specific credible interval (CI)
 }

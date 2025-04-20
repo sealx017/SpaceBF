@@ -14,7 +14,8 @@ local_res(Beta, summary = "median", local.p.ths = 0.95)
 \item{local.p.ths}{is the size of the credible interval}
 }
 \value{
-a heatmap object from the pheatmap package.
+a data.frame of local beta estimates (N rows for N locations), local p-values, and 
+Geweke convergence-diagnostic statistic for each local beta.
 }
 \description{
 Perform local significance test

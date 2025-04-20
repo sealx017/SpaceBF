@@ -36,7 +36,7 @@ MST_construction <- function(x, type = "random"){
 #' @param title.hjust denotes the position of the plot title, default is centered
 #' @param title.size  denotes the size of the plot title
 #' @param node.size denotes the size of each node/location of the MST
-#' @return To visualize the MST
+#' @return The MST plot
 #'
 #' @export
 
@@ -61,10 +61,10 @@ print_mst <- function(mst_out, coords, title.hjust = 0.5, title.size = 10, node.
 
 #' @title Function for kernel matrix construction based on the distance matrix 
 #'
-#' @param x is a dist object or an Euclidean distance matrix
+#' @param x is a dist object or an N x N Euclidean distance matrix between N locations
 #' @param l is the lengthscale, controlling the exponential decay
 #' @param type denotes the type of kernel function, exponential or radial basis function (RBF)
-#' @return To visualize the MST
+#' @return The kernel covariance matrix of dimension N x N, between N locations
 #'
 #' @export
 

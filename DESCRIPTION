@@ -12,6 +12,7 @@ Imports:
  fossil,
  igraph,
  MERINGUE,
+ SpaGene,
  ggplot2,
  circlize,
  RColorBrewer,
@@ -19,7 +20,8 @@ Imports:
  latex2exp,
  patchwork,
  spdep,
- sf
+ sf,
+ ComplexHeatmap
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

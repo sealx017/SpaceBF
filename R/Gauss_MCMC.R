@@ -10,7 +10,7 @@
 #' @param nug_sig2 is the additional precision on beta1's
 #' @param scale_by_sigma is TRUE or FALSE, whether to scale the beta's by variance of y or not 
 #' @param verbose is TRUE or FALSE, to show or suppress progression updates
-#' @return It returns the estimated beta's, r, shrinkage parameters, and deviance
+#' @return It returns the estimated beta's, sigma, shrinkage parameters, and deviance
 #'
 #' @export
 

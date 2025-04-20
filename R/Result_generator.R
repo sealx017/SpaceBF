@@ -1,15 +1,28 @@
-#' @title Local-level or cell-specific credible interval
+#' @title MCMC convergence plot
 #'
-#' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
-#' @param p.ths is the size of the credible interval
-#' @return a heatmap object from the pheatmap package.
+#' @param x is a vector of MCMC samples, of dimension nIter x 1
+#' @return a plot of MCMC samples with posterior mean in color green
 #'
 #' @export
 #'
 
-local_credible <-function(Beta, p.ths = 0.95){
+MCMC_plot <-function(x){
+  plot(x, type = "l", ylim = c(-1.2*max(abs(x)), 1.2*max(abs(x))))
+  abline(h = mean(x), col = "green")
+}
+
+#' @title Local-level or cell-specific credible interval (CI)
+#'
+#' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
+#' @param local.p.ths is the size of the CI for each location
+#' @return a N x 1 vector of 0/1, depending on the CI for a location contains 0 or not.
+#'
+#' @export
+#'
+
+local_credible <-function(Beta, local.p.ths = 0.9){
   CI_of_betas = t(apply(Beta, 2, 
-  function(x) unlist(bayestestR::ci(x, ci = p.ths, method = "ETI"))[-1]))
+  function(x) unlist(bayestestR::ci(x, ci = local.p.ths, method = "ETI"))[-1]))
   zero_finder = apply(CI_of_betas, 1, 
   function(x){ifelse(x[1] <= 0 & x[2] >= 0, 0, 1)})
   return(zero_finder)
@@ -19,8 +32,10 @@ local_credible <-function(Beta, p.ths = 0.95){
 #'
 #' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
 #' @param summary is the type of posterior summary measure to use, either "median" or "mean"
-#' @param local.p.ths is the size of the credible interval
-#' @return a heatmap object from the pheatmap package.
+#' @param local.p.ths is the size of the credible interval for location-specific tests
+#' @return a list of global beta estimate (mean or median across locations),
+#' global p-value, number of locations where local CI does not contain 0 (i.e., significant), 
+#' and Geweke convergence-diagnostic statistic for the global beta
 #'
 #' @export
 #'
@@ -28,7 +43,7 @@ local_credible <-function(Beta, p.ths = 0.95){
 global_res <- function(Beta, summary = "median", local.p.ths = 0.95){
   
   # finding cells with non-zero local estimate based on credible interval
-  CI <- local_credible(Beta, p.ths = local.p.ths)
+  CI <- local_credible(Beta, local.p.ths = local.p.ths)
   
   # ROPE p-value based on the value of the posterior mean/median of beta's
   if(summary == "median"){
@@ -57,7 +72,8 @@ global_res <- function(Beta, summary = "median", local.p.ths = 0.95){
 #' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
 #' @param summary is the type of posterior summary measure to use, either "median" or "mean"
 #' @param local.p.ths is the size of the credible interval
-#' @return a heatmap object from the pheatmap package.
+#' @return a data.frame of local beta estimates (N rows for N locations), local p-values, and 
+#' Geweke convergence-diagnostic statistic for each local beta.
 #'
 #' @export
 #'
@@ -121,7 +137,7 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
   colnames(location_data_with_beta) <- c("x", "y", "y1", "y2")
   
   location_data_with_beta$beta <- colMeans(Beta)
-  sigfinder <- local_credible(Beta, p.ths = local.p.ths)
+  sigfinder <- local_credible(Beta, local.p.ths)
   
   p.sf<- sf::st_as_sf(location_data_with_beta, coords = c("x", "y"))
   
@@ -140,7 +156,7 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
   p.sf$y2 <- pmax(pmin(p.sf$y2, exp_ths_max), -exp_ths_min)
   
   betas <- ggplot(data =  p.sf) +
-    geom_sf(aes(color = beta), size = 0.5) +  
+    geom_sf(aes(color = beta), size = 1) +  
     labs(color = TeX(sprintf("$\\beta_1(s) - \\bar{\\beta}_1$"))) + 
     ggtitle(TeX(sprintf("$\\bar{\\beta}_1 = %.2f$, $\\sigma_{\\beta} = %.2f$", mean_beta, SD_beta))) +            #TeX(sprintf("$\\sigma_B = %f $", SD_beta))) + 
     theme(axis.text = element_blank(), axis.ticks = element_blank(), 
@@ -152,10 +168,10 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
     ) + sc_LH
   
   
-  p.sf$beta[sigfinder == 0] <- -50
+  p.sf$beta[sigfinder == 0] <- -50 # arbitrary value to grey out insignificant results
 
   betas2 <- ggplot(data =  p.sf) +
-    geom_sf(aes(color = beta), size = 0.5) +  
+    geom_sf(aes(color = beta), size = 1) +  
     labs(color = TeX(sprintf("$\\frac{\\beta_1(s) - \\bar{\\beta}_1}{\\sigma_{\\beta}}$"))) + 
     ggtitle(TeX(sprintf("$\\bar{\\beta}_1 = %f $", mean_beta))) + 
     theme(axis.text = element_blank(), axis.ticks = element_blank(), 
@@ -166,7 +182,7 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
   
   
   p1 <- ggplot(data =  p.sf) +
-    geom_sf(aes(color = y1), size = 0.5) +   
+    geom_sf(aes(color = y1), size = 1) +   
     scale_color_gradientn(colours = (viridis::viridis(10)), 
     limits = c(exp_ths_min, exp_ths_max)) +
     labs(color = ifelse(which.model == "NB", "log1p(expr)", "expr")) + 
@@ -178,7 +194,7 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
       plot.title = element_text(hjust = 0.5, size = 12))
   
   p2 <- ggplot(data =  p.sf) +
-    geom_sf(aes(color = y2), size = 0.5) +   
+    geom_sf(aes(color = y2), size = 1) +   
     scale_color_gradientn(colours = (viridis::viridis(10)), 
     limits = c(exp_ths_min, exp_ths_max)) +
     labs(color = ifelse(which.model == "NB", "log1p(expr)", "expr")) + 

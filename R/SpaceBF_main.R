@@ -10,7 +10,7 @@
 #' @param which.r.sampler is the choice of sampling r in the NB model, either CRT or MH
 #' @param scale_by_sigma is TRUE or FALSE for the Gaussian model, whether to scale the beta's by variance of y or not 
 #' @param verbose is TRUE or FALSE, to show or suppress progression updates
-#' @return It returns the estimated beta's, r, shrinkage parameters, and deviance
+#' @return It returns the estimated beta's, r or sigma, shrinkage parameters, and deviance
 #'
 #' @export
 

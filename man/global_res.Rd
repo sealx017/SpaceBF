@@ -11,10 +11,12 @@ global_res(Beta, summary = "median", local.p.ths = 0.95)
 
 \item{summary}{is the type of posterior summary measure to use, either "median" or "mean"}
 
-\item{local.p.ths}{is the size of the credible interval}
+\item{local.p.ths}{is the size of the credible interval for location-specific tests}
 }
 \value{
-a heatmap object from the pheatmap package.
+a list of global beta estimate (mean or median across locations),
+global p-value, number of locations where local CI does not contain 0 (i.e., significant), 
+and Geweke convergence-diagnostic statistic for the global beta
 }
 \description{
 Perform global significance test

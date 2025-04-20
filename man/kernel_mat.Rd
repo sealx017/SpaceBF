@@ -7,14 +7,14 @@
 kernel_mat(x, l, type = "exponential")
 }
 \arguments{
-\item{x}{is a dist object or an Euclidean distance matrix}
+\item{x}{is a dist object or an N x N Euclidean distance matrix between N locations}
 
 \item{l}{is the lengthscale, controlling the exponential decay}
 
 \item{type}{denotes the type of kernel function, exponential or radial basis function (RBF)}
 }
 \value{
-To visualize the MST
+The kernel covariance matrix of dimension N x N, between N locations
 }
 \description{
 Function for kernel matrix construction based on the distance matrix
