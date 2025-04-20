@@ -31,7 +31,7 @@ The *R* package implements the models proposed in the manuscript "SpaceBF: Spati
 We install and load the developmental version of SpaceBF from GitHub.
 ```{r loading packages, message=FALSE}
 
-suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
+#suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
 suppressWarnings(library(SpaceBF))
 # # packages providing functional help
 # library(Matrix); library(igraph);  library(sf)
@@ -116,6 +116,8 @@ The main function "SpaceBF" fits both the negative binomial (which.model = "NB")
 
 ```{r fit SpaceBF NB model, echo = T, results = T}
 MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000)  # decrease nIter for quicker results
+
+
 print(str(MM)) # check the returned list object
 ```
 
