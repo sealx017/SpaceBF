@@ -22,7 +22,7 @@ co-expression between pairs of molecules, such as ligand-receptor
 interactions, in spatial transcriptomics (ST) and mass spectrometry
 imaging (MSI) datasets. It is easily applicable to broader spatial
 datasets, to study spatially varying interaction between any two
-variables, based on a spatial fused horseshoe prior.
+variables, based on a spatial fused ho rseshoe prior.
 
 ## Install and load SpaceBF
 
