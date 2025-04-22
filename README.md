@@ -70,7 +70,7 @@ w <- MERINGUE::getSpatialNeighbors(coords[, 1:2], filterDist = 5) # constructing
 # plotNetwork(coords[, 1:2], w)
 ```
 
-## Construct the kernel covariance matrix
+## Construct a spatial kernel covariance matrix (for simulation)
 
 We construct a kernel covariance matrix *K* based on the exponential
 kernel function (type = “exponential” or “RBF”) for length-scale *l* =
@@ -192,7 +192,7 @@ print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 lo
 # 5  0.2613820 0.07781562         1.0724293
 ```
 
-## Visualize the estimated slope surface along with th expression profiles
+## Visualize the estimated slope surface along with the expression profiles
 
 Display the expression of *y1* and *y2* across the spatial locations
 along the estimated slope (in a *z*-score type format, i.e., scaled by

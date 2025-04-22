@@ -66,7 +66,7 @@ w <- MERINGUE::getSpatialNeighbors(coords[, 1:2], filterDist = 5) # constructing
 
 
 
-## Construct the kernel covariance matrix
+## Construct a spatial kernel covariance matrix (for simulation)
 
 We construct a kernel covariance matrix *K* based on the exponential kernel function (type = "exponential" or "RBF") for length-scale *l* = 7.2. Increasing *l* strengthens the spatial dependency between the points. We visualize *K* using heatmap.
 
@@ -151,7 +151,7 @@ L_results <- local_res(MM$Beta[, -c(1:N)],  local.p.ths = 0.9)
 print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 ```
 
-## Visualize the estimated slope surface along with th expression profiles
+## Visualize the estimated slope surface along with the expression profiles
 
 Display the expression of *y1* and *y2* across the spatial locations along the estimated slope (in a *z*-score type format, i.e., scaled by mean and SD). In the last sub-figure, locations where the local test produced a *p*-value > 0.9 are greyed.
 
