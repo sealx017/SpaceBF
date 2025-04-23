@@ -21,6 +21,7 @@ Imports:
  patchwork,
  spdep,
  sf,
+ BayesLogit,
  ComplexHeatmap
 License: GPL-2
 Encoding: UTF-8
