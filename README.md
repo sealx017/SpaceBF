@@ -26,8 +26,8 @@ variables, based on a spatial fused horseshoe prior.
 
 ## Install and load SpaceBF
 
-We install and load the developmental version of SpaceBF from GitHub.
-You will need to install packages ‘MERINGUE’
+We install and load the developmental version of SpaceBF from GitHub. We
+will need to install packages ‘MERINGUE’
 (<https://github.com/JEFworks-Lab/MERINGUE>), ‘SpaGene’
 (<https://github.com/liuqivandy/SpaGene>), and ‘ComplexHeatmap’
 (<https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html>),
