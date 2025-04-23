@@ -27,12 +27,25 @@ variables, based on a spatial fused horseshoe prior.
 ## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub.
+You will need to install packages ‘MERINGUE’
+(<https://github.com/JEFworks-Lab/MERINGUE>), ‘SpaGene’
+(<https://github.com/liuqivandy/SpaGene>), and ‘ComplexHeatmap’
+(<https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html>),
+used for comparison and visualization, manually as they are not
+available on CRAN.
 
 ``` r
 
-#suppressWarnings(devtools::install_github('sealx017/SpaceBF', quiet = TRUE))
+devtools::install_github('JEFworks-Lab/MERINGUE')
+devtools::install_github("liuqivandy/SpaGene")
+suppressWarnings(BiocManager::install("ComplexHeatmap"))
+
+# SpaceBF installation
+devtools::install_github('sealx017/SpaceBF', quiet = TRUE)
 suppressWarnings(library(SpaceBF))
-# # packages providing functional help
+
+
+# # List of packages providing functional help
 # library(Matrix); library(igraph);  library(sf)
 # library(fossil); library(coda); library(MERINGUE); library(SpaGene);
 # 
