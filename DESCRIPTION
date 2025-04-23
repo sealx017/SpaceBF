@@ -22,6 +22,7 @@ Imports:
  spdep,
  sf,
  BayesLogit,
+ MCMCpack,
  ComplexHeatmap
 License: GPL-2
 Encoding: UTF-8
