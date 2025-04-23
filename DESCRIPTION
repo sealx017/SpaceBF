@@ -23,6 +23,7 @@ Imports:
  sf,
  BayesLogit,
  MCMCpack,
+ svMisc,
  ComplexHeatmap
 License: GPL-2
 Encoding: UTF-8
