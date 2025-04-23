@@ -42,9 +42,11 @@ suppressWarnings(library(SpaceBF))
 
 
 # # List of packages providing functional help
-# library(Matrix); library(igraph);  library(sf)
-# library(fossil); library(coda); library(MERINGUE); library(SpaGene);
-# 
+# library(Matrix); library(igraph);  library(sf); library(BayesLogit)
+# library(fossil); library(coda); library(MCMCpack); library(svMisc);
+# library(MERINGUE); library(SpaGene);
+
+
 # # packages providing plotting help
 # library(ggplot2); library(circlize); library(RColorBrewer)
 # library(ggraph); library(latex2exp); library(patchwork);
