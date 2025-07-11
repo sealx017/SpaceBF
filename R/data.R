@@ -25,7 +25,7 @@
 #'
 #' The full cSCC dataset, consisting gene expression, xy-coordinates, and keratin pairs
 #'
-#' @format A list of three data frames, with gene expression, co-ordinates, and LR pairs
+#' @format A list of three data frames, with gene expression, co-ordinates, and keratin pairs
 #' @source \url{https://www.cell.com/cell/fulltext/S0092-8674(20)30672-3?uuid=uuid%3A17a76bad-26cc-4068-920b-aa7ed206a71e}
 #' @usage data(SpaceBF_cSCC)
 "SpaceBF_cSCC"
