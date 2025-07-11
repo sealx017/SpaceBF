@@ -282,4 +282,3 @@ research, 78(20):5970–5979.
 
 This project is licensed under the GPL-3.0 License - see the `LICENSE-GPL3` file for details. The `data` directory contains data files licensed under the CC0 waiver- see `LICENSE-CC0` for details.
 
-<img width="624" height="80" alt="image" src="https://github.com/user-attachments/assets/a83bc55c-73d5-43c6-8e06-6b1b782e091b" />
