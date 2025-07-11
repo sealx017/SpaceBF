@@ -67,7 +67,6 @@ MCMC_plot(MM$Beta[, (N + ran_sam[4])])
 # ===================================
 # global and local results
 # ===================================
-
 all_global_res <- NULL
 for(i in (1:nrow(LR_pairs))){
   MM <- temp2[[i]]
