@@ -16,7 +16,7 @@
 #'
 #' The full melanoma dataset, consisting gene expression, xy-coordinates, and LR pairs
 #'
-#' @format A data frame with N = 292 rows (spots, 1 removed based on QC) and 3 columns (xy coordinates and celltypes):
+#' @format A list of three data frames, with gene expression, co-ordinates, and LR pairs
 #' @source \url{https://aacrjournals.org/cancerres/article/78/20/5970/631815/Spatially-Resolved-Transcriptomics-Enables}
-#' @usage data(mela_coords)
+#' @usage data(SpaceBF_melanoma)
 "SpaceBF_melanoma"
