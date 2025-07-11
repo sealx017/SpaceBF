@@ -30,7 +30,7 @@ Each_LR <- function(x){
   y1 <- gene_data_mela[LR_pairs[x, 2], ]
   y2 <- gene_data_mela[LR_pairs[x, 1], ]
   beta0s_beta1s <- SpaceBF::SpaceBF(y1, y2, X = NULL, G = mst.adjmat, 
-                   which.model = "NB", nIter = 50)  # decrease nIter for quicker results
+                   which.model = "NB", nIter = 5000)  # decrease nIter for quicker results
   return(beta0s_beta1s)
 }
 

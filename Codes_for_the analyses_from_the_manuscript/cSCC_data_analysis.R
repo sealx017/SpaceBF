@@ -21,7 +21,7 @@ dist_mat <- dist(coords_data_cSCC)
 
 mst.out <- MST_construction(dist_mat, type = "random") 
 mst.adjmat <- mst.out[[1]]            # MST adjacency matrix, to be used as G in the main function later
-print_mst(mst.out, coords_data_cSCC[, 1:2])
+print_mst(mst.out, coords_data_cSCC)
 
 # ========================================
 # function to run SpaceBF across LR pairs
