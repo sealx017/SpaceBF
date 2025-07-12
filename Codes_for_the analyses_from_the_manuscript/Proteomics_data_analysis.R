@@ -42,7 +42,7 @@ Each_pair <- function(x){
   y1 <- peptide_exp[, peptide_pair[x, 1]]
   y2 <- peptide_exp[, peptide_pair[x, 2]]
   beta0s_beta1s <- SpaceBF::SpaceBF(y1, y2, X = NULL, G = mst.adjmat, 
-                                    which.model = "Gauss", nIter = 2)  # decrease nIter for quicker results
+                                    which.model = "Gauss", nIter = 1000)  # decrease nIter for quicker results
   return(beta0s_beta1s)
 }
 
