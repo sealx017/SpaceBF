@@ -5,7 +5,7 @@ devtools::install_github('sealx017/SpaceBF', quiet = TRUE)
 suppressWarnings(library(SpaceBF))
 
 # =========================================================================
-# download the proteomics dataset from: https://zenodo.org/records/15838609 
+# download the proteomics dataset from: https://zenodo.org/records/15866928
 # and store inside a "path" directory
 # =========================================================================
 path <- "/Users/sealso/Research/Collaboration/Peggi/Data/"
