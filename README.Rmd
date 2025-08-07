@@ -44,7 +44,8 @@ library(SpaceBF)
 
 
 # # List of packages providing functional help
-# library(Matrix); library(igraph);  library(sf); library(BayesLogit)
+# library(Matrix); library(igraph);  library(sf);
+# library(BayesLogit); library(BayestestR);
 # library(fossil); library(coda); library(MCMCpack); library(svMisc);
 # library(MERINGUE); library(SpaGene);
 

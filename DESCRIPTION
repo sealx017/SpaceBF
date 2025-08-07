@@ -11,6 +11,7 @@ Imports:
  coda,
  fossil,
  igraph,
+ BayestestR,
  MERINGUE,
  SpaGene,
  ggplot2,
