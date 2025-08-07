@@ -24,6 +24,10 @@ imaging (MSI) datasets. It is easily applicable to broader spatial
 datasets, to study spatially varying interaction between any two
 variables, based on a spatial fused horseshoe prior.
 
+\*\*August 7, 2025 update: a modification to the package has improved
+computational complexity by several folds. Users are requested to
+re-install the package.
+
 ## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub. We
@@ -42,7 +46,9 @@ suppressWarnings(BiocManager::install("ComplexHeatmap"))
 
 # SpaceBF installation
 devtools::install_github('sealx017/SpaceBF', quiet = TRUE)
-suppressWarnings(library(SpaceBF))
+library(SpaceBF)
+# Warning: replacing previous import 'circlize::degree' by 'igraph::degree' when
+# loading 'SpaceBF'
 
 
 # # List of packages providing functional help
@@ -152,11 +158,11 @@ MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000
 
 print(str(MM)) # check the returned list object
 # List of 5
-#  $ Beta    : num [1:2500, 1:586] -1.149 -1.299 -1.319 -0.945 -1.203 ...
-#  $ R       : num [1:2500, 1] 7.31 6.83 6.81 6.49 6.25 ...
-#  $ Lambda  : num [1:2500, 1:584] 0.276 1.897 0.808 0.291 1.545 ...
-#  $ Tau     : num [1:2500, 1:2] 0.001378 0.001336 0.001207 0.000999 0.000851 ...
-#  $ Deviance: num [1:2500, 1] 1193 1206 1203 1214 1201 ...
+#  $ Beta    : num [1:2500, 1:586] -0.601 -1.11 -1.217 -1.362 -1.524 ...
+#  $ R       : num [1:2500, 1] 6.26 6.4 6.41 6.72 6.72 ...
+#  $ Lambda  : num [1:2500, 1:584] 0.001167 0.000657 0.001914 0.003592 0.001043 ...
+#  $ Tau     : num [1:2500, 1:2] 0.000292 0.000323 0.000332 0.000334 0.000355 ...
+#  $ Deviance: num [1:2500, 1] 1240 1225 1211 1213 1213 ...
 # NULL
 ```
 
@@ -194,17 +200,17 @@ similar format.
 G_results <- global_res(MM$Beta[, -c(1:N)], summary = "median", local.p.ths = 0.9)
 print(G_results)  # test should be significant if nu is highly +ve or -ve
 #      global.beta  global.pval num.nonzero.local Geweke.global.beta
-# var1   0.3002537 3.142593e-06               225          0.5678453
+# var1   0.2969976 0.0007659962               197            2.13144
 
 
 L_results <- local_res(MM$Beta[, -c(1:N)],  local.p.ths = 0.9)
 print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 #   local.beta local.pval Geweke.local.beta
-# 1  0.2559117 0.13036105         0.5063517
-# 2  0.2581474 0.12229773         0.4169809
-# 3  0.2548976 0.11283988         0.3224292
-# 4  0.2531049 0.12772233         0.1603023
-# 5  0.2613820 0.07781562         1.0724293
+# 1  0.2297110  0.2124571        0.88811059
+# 2  0.2266684  0.2023411        1.20741449
+# 3  0.2251612  0.1909162        1.35650487
+# 4  0.2250873  0.2408612        1.55704044
+# 5  0.2403067  0.1153344        0.06546068
 ```
 
 ## Visualize the estimated slope surface along with the expression profiles
@@ -279,6 +285,3 @@ bioRxiv, 2025-03.
 (2018). Spatially resolved transcriptomics enables dissection of genetic
 heterogeneity in stage III cutaneous malignant melanoma. Cancer
 research, 78(20):5970–5979.
-
-This project is licensed under the GPL-3.0 License - see the `LICENSE-GPL3` file for details. The `data` directory contains data files licensed under the CC0 waiver- see `LICENSE-CC0` for details.
-
