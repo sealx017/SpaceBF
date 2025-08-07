@@ -20,7 +20,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   
   # variable definitions
   y <- y1
-  K <- diag(scale(log1p(y2))[, 1])                      # design matrix with scaled log1p(y2)'s on the diagonal
+  K <- spam::as.spam(diag(scale(log1p(y2))[, 1]))                      # design matrix with scaled log1p(y2)'s on the diagonal
   p <- ifelse(!is.null(X), ncol(X), 0)                  # number of covariates
   N <- length(y1)                                       # number of samples
   p_mst <- length(which(G == 1))                        # twice the number of connections
@@ -53,11 +53,13 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   
   r <- 1                           # NB over-dispersion parameter
   
-  B0_mat = B1_mat = Matrix::Matrix(0, N, N, sparse = T, doDiag=FALSE) # initialize precision matrices
+  # Initialize precision matrices using spam
+  B0_mat <- B1_mat <- spam::spam(0, nrow = N, ncol = N)  
+  
   if(p == 1){
   B1_star_mat = Matrix::bdiag(1,  B1_mat)
-  }else if(p > 1){B1_star_mat = Matrix::bdiag(Matrix::Matrix(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
-    
+  }else if(p > 1){B1_star_mat = spam::bdiag(spam::spam(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
+  
   zeta40 = zeta41 = rep(0.1, half_p_mst)             # local shrinkage parameters
   gamma40 = gamma41 = rep(0.1, half_p_mst)           # local shrinkage latent parameters
   tau240 = tau241 = 0.5                              # global shrinkage parameters    
@@ -107,17 +109,21 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
         
         B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
         B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
-        Matrix::diag(B0_mat) <- Matrix::diag(B1_mat) <- 0
-        
-        Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat))  + nug_sig1        # nug_sig1 and nug_sig2 are
-        Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat))  + nug_sig2        # additional precision terms, i.e., 
+        spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
+
+        spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1             # nug_sig1 and nug_sig2 are
+        spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2             # additional precision terms, i.e., 
+
                                                                                 # extra normal priors on the 
                                                                                 # beta's, helping to stabilize 
                                                                                 # the estimates
-
-        sqrt_w_K <- sqrt(w) * K                           # K^T W^(1/2), needed to construct K^TWK
-        B0_mat <- (B0_mat) + diag(w)  
-        B1_mat <- (B1_mat) + crossprod(sqrt_w_K)
+        # Add diagonal weight matrix to B0_mat using spam
+        B0_mat <- B0_mat + spam::diag.spam(w)
+        
+        # K^T W^(1/2), needed to construct K^TWK for B1)mat                     
+        sqrt_w_K <- K
+        sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+        B1_mat <- B1_mat + t(sqrt_w_K) %*% sqrt_w_K
         
         ##################################################
         ## Algorithm 5th step: sample beta's
@@ -170,7 +176,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       }
   }else if(which.r.sampler == "CRT" & p != 0){
     # same algorithm as above but with additional covariate adjustment
-    K = cbind(X, K)      # redefine K to include the covariates matrix X
+    K = spam::cbind(X, K)      # redefine K to include the covariates matrix X
     
     for (i in 1:nIter){
       #############################################################################
@@ -202,15 +208,21 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       
       B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0  
       B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat)   <- 0
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat))  + nug_sig1        
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat))  + nug_sig2         
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1             # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2             # additional precision terms, i.e., 
+      
 
-      sqrt_w_K <- sqrt(w) * K                                     # K^T W^(1/2), needed to construct K^TWK
-      B0_mat <- (B0_mat) + diag(w)  
-      B1_star_mat <- Matrix::bdiag(Matrix::Matrix(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
-      B1_star_mat <- (B1_star_mat) + crossprod(sqrt_w_K)
+      # Add diagonal weight matrix to B0_mat using spam
+      B0_mat <- B0_mat + spam::diag.spam(w)
+      
+      # K^T W^(1/2), needed to construct K^TWK for B1)mat                     
+      sqrt_w_K <- K
+      sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+
+      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
       
       ##################################################
       ## Algorithm 5th step: sample beta's
@@ -258,7 +270,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       }else{if(i%%500 == 0){print(paste0(i, " / ", nIter))}
       }
     }
-  } else   if(which.r.sampler == "MH" & p == 0){
+  } else if(which.r.sampler == "MH" & p == 0){
     # algorithm with MH-based r sampling and no covariates
     
     for (i in 1:nIter){
@@ -297,17 +309,19 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       
       B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
       B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat)   <- 0
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat))  + nug_sig1        # nug_sig1 and nug_sig2 are
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat))  + nug_sig2        # additional precision terms, i.e., 
-                                                                              # extra normal priors on the 
-                                                                              # beta's, helping to stabilize 
-                                                                              # the estimates
-                                                                              
-      sqrt_w_K <- sqrt(w) * K                    # K^T W^(1/2), needed to construct K^TWK
-      B0_mat <- (B0_mat) + diag(w)  
-      B1_mat <- (B1_mat) + crossprod(sqrt_w_K)
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1             # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2             # additional precision terms, i.e., 
+      
+
+      # Add diagonal weight matrix to B0_mat using spam
+      B0_mat <- B0_mat + spam::diag.spam(w)
+      
+      # K^T W^(1/2), needed to construct K^TWK for B1)mat                     
+      sqrt_w_K <- K
+      sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+      B1_mat <- B1_mat + t(sqrt_w_K) %*% sqrt_w_K
       
       ##################################################
       ## Algorithm 5th step: sample beta's
@@ -360,7 +374,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
     }
   }else if(which.r.sampler == "MH" & p != 0){
     # same algorithm as above but with additional covariate adjustment
-    K = cbind(X, K)      # redefine K to include the covariates matrix X
+    K = spam::cbind(X, K)      # redefine K to include the covariates matrix X
     
     for (i in 1:nIter){
       #############################################################################
@@ -398,15 +412,22 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       
       B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0  
       B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat)   <- 0
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat))  + nug_sig1        
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat))  + nug_sig2         
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1             # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2             # additional precision terms, i.e., 
       
-      sqrt_w_K <- sqrt(w) * K                           # K^T W^(1/2), needed to construct K^TWK
-      B0_mat <- (B0_mat) + diag(w)  
-      B1_star_mat <- Matrix::bdiag(Matrix::Matrix(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
-      B1_star_mat <- (B1_star_mat) + crossprod(sqrt_w_K)
+      
+      # Add diagonal weight matrix to B0_mat using spam
+      B0_mat <- B0_mat + spam::diag.spam(w)
+      
+      # K^T W^(1/2), needed to construct K^TWK for B1)mat                     
+      sqrt_w_K <- K
+      sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+      
+      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
+      
       
       ##################################################
       ## Algorithm 5th step: sample beta's

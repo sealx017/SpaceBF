@@ -64,13 +64,13 @@ G = mstobj
 N = 293
 #-----------------------------------------
 
-
 set.seed(2025*2)
+K <- kernel_mat(x, l = 7.2, type = "exponential") 
 
 # generate bivariate Gaussian data across space: (y1, y2)^T, y1, y2 are N x 1
 nu = 0.5 # correlation term 
 y_latent_both <- c(MASS::mvrnorm(1, rep(0, 2*N), 
-                  kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) # kronecker product sturcture
+                                 kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) # kronecker product sturcture
 y1_latent <- y_latent_both[1:N]; y2_latent <- y_latent_both[-c(1:N)]
 
 U1 = pnorm(y1_latent); U2 = pnorm(y2_latent) # transformation using the CDF of standard normal
@@ -87,3 +87,57 @@ MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB")
 G_results <- global_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
 L_results <- local_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
 
+########################
+
+library(anndata)
+library(ggplot2)
+library(MERINGUE)
+
+
+
+
+# Gaussian --------------------------------
+N = 5000
+sigma2 = 10
+ck = ck2 = NULL
+X_1 = scale(runif(N, 0, 1000))
+X_2 = scale(runif(N, 0, 1000))
+
+x <- dist(cbind(X_1, X_2))
+### find a minimum spanning tree using dino
+mstobj <- fossil::dino.mst(x)
+kernel_mat <- function(x, l){
+  return(exp(-as.matrix(x)/l))
+}
+
+#-----------------------------------------
+
+
+set.seed(2025*2)
+K <- kernel_mat(x, l = 7.2) 
+
+# generate bivariate Gaussian data across space: (y1, y2)^T, y1, y2 are N x 1
+nu = 0.5 # correlation term 
+y_latent_both <- c(MASS::mvrnorm(1, rep(0, 2*N), 
+                   kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) # kronecker product sturcture
+y1_latent <- y_latent_both[1:N]; y2_latent <- y_latent_both[-c(1:N)]
+
+U1 = pnorm(y1_latent); U2 = pnorm(y2_latent) # transformation using the CDF of standard normal
+NB_q1 <- NB_q2 <- 0.2                        # NB probabilities 
+r1 <- r2 <- 1                                # NB dispersion parameters
+
+y1 <- qnbinom(U1, r1, NB_q1)                 # inverse of NB CDF for both variables
+y2 <- qnbinom(U2, r2, NB_q2)
+
+#NBM <- NB_model(y1, y2, X = NULL, G = mst.adjmat, nIter = 5000, verbose = "TRUE")
+#GM <- Gauss_model(y1, y2, X = NULL, G = mst.adjmat, nIter = 5000, verbose = "TRUE")
+start_time <- proc.time()
+MM <- SpaceBF(y1, y2, X = NULL, G = mstobj, which.model = "NB", nIter = 1000)
+print(proc.time() - start_time)
+
+G_results <- global_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
+L_results <- local_res(MM$Beta[, -c(1:N)], local.p.ths = 0.9)
+
+start_time <- proc.time()
+ck <- NB_model(y1, y2, X = NULL, G = mstobj, nIter = 1000, nug_sig1 = 0.2,nug_sig2 = 0.2)
+print(proc.time() - start_time)

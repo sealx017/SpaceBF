@@ -22,7 +22,7 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   
   # variable definitions
   y <- y1
-  K <- diag(scale(y2)[, 1])                             # design matrix with scaled y2's on the diagonal
+  K <- spam::as.spam(diag(scale(log1p(y2))[, 1]))       # design matrix with scaled log1p(y2)'s on the diagonal
   p <- ifelse(!is.null(X), ncol(X), 0)                  # number of covariates
   N <- length(y)                                        # number of samples
   p_mst <- length(which(G == 1))                        # twice the number of connections
@@ -55,10 +55,12 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   
   sigma2 <- 1                      # variance of y
   
-  B0_mat = B1_mat = Matrix::Matrix(0, N, N, sparse = T, doDiag=FALSE) # initialize precision matrices
+  # Initialize precision matrices using spam
+  B0_mat <- B1_mat <- spam::spam(0, nrow = N, ncol = N)  
+  
   if(p == 1){
     B1_star_mat = Matrix::bdiag(1,  B1_mat)
-  }else if(p > 1){B1_star_mat = Matrix::bdiag(Matrix::Matrix(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
+  }else if(p > 1){B1_star_mat = spam::bdiag(spam::spam(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
   
   zeta40 = zeta41 = rep(0.1, half_p_mst)             # local shrinkage parameters
   gamma40 = gamma41 = rep(0.1, half_p_mst)           # local shrinkage latent parameters
@@ -78,24 +80,25 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
 
   if(scale_by_sigma == FALSE & p == 0){
     # algorithm without scaling the coefficients by the variance of y
-    KTy <- crossprod(K, y) # computing and keeping some quantities fixed
-    diag_K <- diag(K)                                  # vectorized K
-    KTK<-K^2                                           # K is diagonal, K^2 = K^TK
-    ID_mat <- diag(1, N)                               # identity matrix
+    KTy <- K %*% y                                                # computing and keeping some quantities fixed
+    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
+    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
       ## Algorithm 1st step: update the precision matrices of the beta0 and beta1's
       #############################################################################
-      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -1/zeta40/tau240*sigma2
-      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -1/zeta41/tau241*sigma2
+      off_diag_val0 <- 1/zeta40/tau240
+      off_diag_val1 <- 1/zeta41/tau241
       
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat) <- 0
-      B0_mat[B0_mat >  1e10] <- 1e10; B0_mat[B0_mat < -1e10] <- -1e10
-      B1_mat[B1_mat >  1e10] <- 1e10; B1_mat[B1_mat < -1e10] <- -1e10
+      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
+      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat)) + nug_sig1*sigma2 
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat)) + nug_sig2*sigma2 
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1*sigma2             # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2*sigma2             # additional precision terms, i.e., 
+      
       B0_mat <- (B0_mat) + ID_mat 
       B1_mat <- (B1_mat) + KTK 
       
@@ -152,28 +155,28 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       }
     }
   }else if(scale_by_sigma == FALSE & p > 0){
-    # same algorithm as above but with additional covariate adjustment
-    diag_K <- diag(K)
-    K <- cbind(X, K)      # redefine K to include the covariates matrix X
-    KTy <- crossprod(K, y)                             # computing and keeping some quantities fixed
-    KTK <-  Matrix::Matrix(crossprod(K, K), sparse = T)                                          
-    ID_mat <- diag(1, N)                               # identity matrix
+    # algorithm without scaling the coefficients by the variance of y
+    KTy <- K %*% y                                                # computing and keeping some quantities fixed
+    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
+    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
       ## Algorithm 1st step: update the precision matrices of the beta0 and beta1's
       #############################################################################
-      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -1/zeta40/tau240*sigma2
-      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -1/zeta41/tau241*sigma2
+      off_diag_val0 <- 1/zeta40/tau240
+      off_diag_val1 <- 1/zeta41/tau241
       
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat) <- 0
-      B0_mat[B0_mat >  1e10] <- 1e10; B0_mat[B0_mat < -1e10] <- -1e10
-      B1_mat[B1_mat >  1e10] <- 1e10; B1_mat[B1_mat < -1e10] <- -1e10
+      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
+      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat)) + nug_sig1*sigma2 
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat)) + nug_sig2*sigma2 
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1*sigma2             # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2*sigma2             # additional precision terms, i.e., 
+      
       B0_mat <- (B0_mat) + ID_mat 
-      B1_star_mat <- Matrix::bdiag(Matrix::Matrix(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + KTK 
       
       ##################################################
@@ -229,29 +232,32 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       }
     }
   }else if(scale_by_sigma == TRUE & p == 0){
-    # algorithm with scaling the coefficients by the variance of y
-    KTy <- crossprod(K, y)                             # computing and keeping some quantities fixed
-    diag_K <- diag(K)                                  # vectorized K
-    KTK <- K^2                                         # K is diagonal, K^2 = K^TK
-    ID_mat <- diag(1, N)                               # identity matrix
+    # algorithm without scaling the coefficients by the variance of y
+    KTy <- K %*% y                                                # computing and keeping some quantities fixed
+    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
+    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
       ## Algorithm 1st step: update the precision matrices of the beta0 and beta1's
       #############################################################################
-      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -1/zeta40/tau240
-      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -1/zeta41/tau241
+      off_diag_val0 <- 1/zeta40/tau240
+      off_diag_val1 <- 1/zeta41/tau241
       
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat) <- 0
-      B0_mat[B0_mat >  1e10] <- 1e10; B0_mat[B0_mat < -1e10] <- -1e10
-      B1_mat[B1_mat >  1e10] <- 1e10; B1_mat[B1_mat < -1e10] <- -1e10
+      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
+      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat)) + nug_sig1
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat)) + nug_sig2 
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1            # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2            # additional precision terms, i.e., 
+      
       B0_mat_noK <- B0_mat
       B1_mat_noK <- B1_mat
+      
       B0_mat <- (B0_mat) + ID_mat 
       B1_mat <- (B1_mat) + KTK 
+      
       
       ##################################################
       ## Algorithm 2nd step: sample beta's
@@ -309,33 +315,35 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
     }
   }else if(scale_by_sigma == TRUE & p > 0){
     # same algorithm as above but with additional covariate adjustment
-    diag_K <- diag(K)
-    K <- crossprod(K, y)                               # redefine K to include the covariates matrix X
-    KTy<-K %*% y                                       # computing and keeping some quantities fixed
-    diag_K <- diag(K)                                  # vectorized K
-    KTK <- crossprod(K)                                 
-    ID_mat <- diag(1, N)                               # identity matrix
+
+    # algorithm without scaling the coefficients by the variance of y
+    K <- cbind(X, K)                                   # redefine K to include the covariates matrix X
+    KTy <- t(K) %*% y                                  # computing and keeping some quantities fixed
+    diag_K <- spam::diag_spam(K)                       # vectorized K
+    KTK<- K %*% K                                      # K is diagonal, K^2 = K^TK
+    ID_mat <- spam::diag_spam(1, N)                    # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
       ## Algorithm 1st step: update the precision matrices of the beta0 and beta1's
       #############################################################################
-      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -1/zeta40/tau240
-      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -1/zeta41/tau241
+      off_diag_val0 <- 1/zeta40/tau240
+      off_diag_val1 <- 1/zeta41/tau241
       
-      Matrix::diag(B0_mat) <- Matrix::diag(B1_mat) <- 0
-      B0_mat[B0_mat >  1e10] <- 1e10; B0_mat[B0_mat < -1e10] <- -1e10
-      B1_mat[B1_mat >  1e10] <- 1e10; B1_mat[B1_mat < -1e10] <- -1e10
+      B0_mat[sorted_indices]  <- B0_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val0   # adjust only non-zero 
+      B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
+      spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      Matrix::diag(B0_mat) <- abs(Matrix::rowSums(B0_mat)) + nug_sig1
-      Matrix::diag(B1_mat) <- abs(Matrix::rowSums(B1_mat)) + nug_sig2
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1            # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2             # additional precision terms, i.e., 
       
       B0_mat_noK <- B0_mat
       B1_mat_noK <- B1_mat
       
       B0_mat <- (B0_mat) + ID_mat 
-      B1_star_mat <- Matrix::bdiag(Matrix::Matrix(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + KTK 
+      
       
       ##################################################
       ## Algorithm 2nd step: sample beta's
