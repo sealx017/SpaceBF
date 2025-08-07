@@ -41,18 +41,19 @@ available on CRAN.
 ``` r
 
 devtools::install_github('JEFworks-Lab/MERINGUE')
-devtools::install_github("liuqivandy/SpaGene")
+devtools::install_github('liuqivandy/SpaGene')
 suppressWarnings(BiocManager::install("ComplexHeatmap"))
 
 # SpaceBF installation
-devtools::install_github('sealx017/SpaceBF', quiet = TRUE)
+devtools::install_github('sealx017/SpaceBF', quiet = TRUE, force = TRUE)
 library(SpaceBF)
 # Warning: replacing previous import 'circlize::degree' by 'igraph::degree' when
 # loading 'SpaceBF'
 
 
 # # List of packages providing functional help
-# library(Matrix); library(igraph);  library(sf); library(BayesLogit)
+# library(Matrix); library(igraph);  library(sf);
+# library(BayesLogit); library(bayestestR);
 # library(fossil); library(coda); library(MCMCpack); library(svMisc);
 # library(MERINGUE); library(SpaGene);
 
