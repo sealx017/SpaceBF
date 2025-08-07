@@ -26,6 +26,8 @@ knitr::opts_chunk$set(
 
 The *R* package implements the models proposed in the manuscript "SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches in Spatial Omics Datasets." It enables the analysis of spatially varying co-expression between pairs of molecules, such as ligand-receptor interactions, in spatial transcriptomics (ST) and mass spectrometry imaging (MSI) datasets. It is easily applicable to broader spatial datasets, to study spatially varying interaction between any two variables, based on a spatial fused horseshoe prior. 
 
+**August 7, 2025 update: a modification to the package has improved computational complexity by several folds. Users are requested to re-install the package.
+
 ## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub. We will need to install packages 'MERINGUE' (https://github.com/JEFworks-Lab/MERINGUE), 'SpaGene' (https://github.com/liuqivandy/SpaGene), and 'ComplexHeatmap' (https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html), used for comparison and visualization, manually as they are not available on CRAN.

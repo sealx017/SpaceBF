@@ -81,9 +81,9 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   if(scale_by_sigma == FALSE & p == 0){
     # algorithm without scaling the coefficients by the variance of y
     KTy <- K %*% y                                                # computing and keeping some quantities fixed
-    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    diag_K <- spam::diag(K)                                  # vectorized K
     KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
-    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
+    ID_mat <- spam::diag(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
@@ -156,10 +156,11 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
     }
   }else if(scale_by_sigma == FALSE & p > 0){
     # algorithm without scaling the coefficients by the variance of y
+    K <- spam::cbind(X, K)                                   # redefine K to include the covariates matrix X
     KTy <- K %*% y                                                # computing and keeping some quantities fixed
-    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    diag_K <- spam::diag(K)                                       # vectorized K
     KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
-    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
+    ID_mat <- spam::diag(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
@@ -234,9 +235,9 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   }else if(scale_by_sigma == TRUE & p == 0){
     # algorithm without scaling the coefficients by the variance of y
     KTy <- K %*% y                                                # computing and keeping some quantities fixed
-    diag_K <- spam::diag_spam(K)                                  # vectorized K
+    diag_K <- spam::diag(K)                                  # vectorized K
     KTK<-K^2                                                      # K is diagonal, K^2 = K^TK
-    ID_mat <- spam::diag_spam(1, N)                               # identity matrix
+    ID_mat <- spam::diag(1, N)                               # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
@@ -317,11 +318,11 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
     # same algorithm as above but with additional covariate adjustment
 
     # algorithm without scaling the coefficients by the variance of y
-    K <- cbind(X, K)                                   # redefine K to include the covariates matrix X
+    K <- spam::cbind(X, K)                                   # redefine K to include the covariates matrix X
     KTy <- t(K) %*% y                                  # computing and keeping some quantities fixed
-    diag_K <- spam::diag_spam(K)                       # vectorized K
+    diag_K <- spam::diag(K)                       # vectorized K
     KTK<- K %*% K                                      # K is diagonal, K^2 = K^TK
-    ID_mat <- spam::diag_spam(1, N)                    # identity matrix
+    ID_mat <- spam::diag(1, N)                    # identity matrix
     
     for (i in 1:nIter){
       #############################################################################
