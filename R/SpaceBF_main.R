@@ -47,7 +47,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", nIter = 5000,
   
   if(is.null(nug_sig)){
   if(mean(y1 == 0) > 0.5 | mean(y2 == 0) > 0.75){   # if there are a lot of 0 values either in y1 or y2,
-                                                    # amplifying the non-didentifiability issue,                                              
+                                                    # amplifying the non-identifiability issue,                                              
                                                     # put extra regularization on the beta's
     nug_sig1 <- 0.2
     nug_sig2 <- 0.2   
