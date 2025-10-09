@@ -34,8 +34,6 @@ Each_LR <- function(x){
   return(beta0s_beta1s)
 }
 
-ck = colMeans(beta0s_beta1s$Beta[, -c(1:N)])
-
 # ========================================
 # parallelized run across cores
 # ========================================
