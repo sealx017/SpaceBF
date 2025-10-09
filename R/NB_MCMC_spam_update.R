@@ -121,8 +121,12 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
         B0_mat <- B0_mat + spam::diag.spam(w)
         
         # K^T W^(1/2), needed to construct K^TWK for B1)mat                     
-        sqrt_w_K <- K
-        sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+        # sqrt_w_K <- K
+        # sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
+        
+        sqrtW     <- spam::diag.spam(sqrt(w), nrow(K), nrow(K))  # sparse diagonal
+        sqrt_w_K  <- sqrtW %*% K    
+        
         B1_mat <- B1_mat + t(sqrt_w_K) %*% sqrt_w_K
         
         ##################################################
