@@ -79,6 +79,14 @@ kernel_mat <- function(x, l, type = "exponential"){
   return(kernel_matrix)
 }
 
+#' @title Function for comparing HS vs, ICAR local coefficients and p-values
+#'
+#' @param L_results is the output of local_res() function on the slope coefficients from the HS model
+#' @param L_results_ICAR is the output of local_res() function on the slope coefficients from the ICAR model
+#' @return The kernel covariance matrix of dimension N x N, between N locations
+#'
+#' @export
+
 plot_local_comparisons <- function(L_results, L_results_ICAR, point_alpha = 0.6, point_size = 1.6) {
 
     df <- data.frame(

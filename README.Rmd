@@ -221,7 +221,7 @@ plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB
 We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The arguments are the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
 
 
-```{r fit SpaceBF NB model with ICAR, echo = T, results = T}
+```{r compare HS vs. ICAR, echo = T, results = T}
 
 L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
 
