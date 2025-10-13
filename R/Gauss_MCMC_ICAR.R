@@ -153,7 +153,7 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   }else if(scale_by_sigma == FALSE & p > 0){
     # algorithm without scaling the coefficients by the variance of y
     K <- spam::cbind(X, K)                                   # redefine K to include the covariates matrix X
-    KTy <- K %*% y                                                # computing and keeping some quantities fixed
+    KTy <- t(K) %*% y                                                # computing and keeping some quantities fixed
     diag_K <- spam::diag(K)                                       # vectorized K
     KTK<- t(K) %*% K                                                    
     ID_mat <- spam::diag(1, N)                                    # identity matrix
