@@ -221,7 +221,7 @@ plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB
 We compare the local estimates by the HS and ICAR models using the function "plot_local_comparisons". The function takes as input the local results from both models, and produces a scatter plot of the local estimates and p-values.
 
 
-```{r compare HS vs. ICAR, echo = T, results = T, out.width="100%"}
+```{r compare HS vs. ICAR, echo = T, results = T, out.width="80%"}
 
 L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
 

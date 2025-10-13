@@ -311,7 +311,7 @@ L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
 plot_local_comparisons(L_results, L_results_ICAR)
 ```
 
-<img src="README_files/figure-gfm/compare HS vs. ICAR-1.png" width="100%" />
+<img src="README_files/figure-gfm/compare HS vs. ICAR-1.png" width="80%" />
 
 ## References
 
