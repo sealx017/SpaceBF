@@ -171,7 +171,7 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       spam::diag(B1_mat) <- spam::diag(B1_mat) + nug_sig2*sigma2 
       
       B0_mat <- (B0_mat) + ID_mat 
-      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + KTK 
       
       ##################################################
@@ -297,9 +297,6 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
     
     for (i in 1:nIter){
       #############################################################################
-      ## Algorithm 1st step: update the precision matrices of the beta0 and beta1's
-      #############################################################################
-      #############################################################################
       ## Algorithm 1st step: update the ICAR precision matrices
       #############################################################################
       
@@ -314,7 +311,7 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       B1_mat_noK <- B1_mat
       
       B0_mat <- (B0_mat) + ID_mat 
-      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + KTK 
       
       

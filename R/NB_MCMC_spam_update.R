@@ -223,7 +223,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       sqrt_w_K <- K
       sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
 
-      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
       B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
       
       ##################################################
@@ -427,7 +427,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       sqrt_w_K <- K
       sqrt_w_K@entries <- sqrt(w) * sqrt_w_K@entries
       
-      B1_star_mat <- spam::bdiag(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
       B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
       
       
