@@ -123,8 +123,6 @@ plot_local_comparisons <- function(L_results, L_results_ICAR, point_alpha = 0.6,
          y = expression(-log[10](p)~"(ICAR)")) +
     theme_minimal(base_size = 12)
   
-  library(cowplot)
-
   # Align panels (both axes) then arrange with equal widths
   aligned <- cowplot::align_plots(p1, p2, align = "hv", axis = "tblr")
   
