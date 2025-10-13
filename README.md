@@ -64,7 +64,7 @@ library(SpaceBF)
 # # packages providing plotting help
 # library(ggplot2); library(circlize); library(RColorBrewer)
 # library(ggraph); library(latex2exp); library(patchwork);
-# library(ComplexHeatmap)
+# library(ComplexHeatmap); library(cowplot);
 ```
 
 ## Load the coordinates of the example dataset and compute MST
