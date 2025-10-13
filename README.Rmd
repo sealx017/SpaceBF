@@ -168,7 +168,7 @@ print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 lo
 
 Display the expression of *y1* and *y2* across the spatial locations along the estimated slope (in a *z*-score type format, i.e., scaled by mean and SD). In the last sub-figure, locations where the local test produced a *p*-value > 0.9 are greyed.
 
-```{r p-value visualization,  out.width="50%"}
+```{r p-value visualization,  out.width="80%"}
 plot_estimates(MM$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
 ```
@@ -209,7 +209,7 @@ print(SG)
 We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The rest of the argumentsare the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
 
 
-```{r fit SpaceBF NB model with ICAR, echo = T, results = T, out.width="50%"}
+```{r fit SpaceBF NB model with ICAR, echo = T, results = T, out.width="80%"}
 MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
 
 plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")

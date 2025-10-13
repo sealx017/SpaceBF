@@ -228,7 +228,7 @@ produced a *p*-value \> 0.9 are greyed.
 plot_estimates(MM$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 ```
 
-<img src="README_files/figure-gfm/p-value visualization-1.png" width="50%" />
+<img src="README_files/figure-gfm/p-value visualization-1.png" width="80%" />
 
 ## Use of other methods
 
@@ -295,7 +295,7 @@ MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "I
 plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 ```
 
-<img src="README_files/figure-gfm/fit SpaceBF NB model with ICAR-1.png" width="50%" />
+<img src="README_files/figure-gfm/fit SpaceBF NB model with ICAR-1.png" width="80%" />
 
 ## Comparison between HS and ICAR estimates
 
