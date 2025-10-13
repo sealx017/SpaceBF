@@ -75,7 +75,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   }else if(which.model == "NB" & which.prior == "ICAR"){
     
     fitted_model <- NB_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
-                                nug_sig2, scale_by_sigma, verbose)
+                                nug_sig2, which.r.sampler, verbose)
   }else if(which.model == "Gaussian" & which.prior == "ICAR"){
     
     fitted_model <- Gauss_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
