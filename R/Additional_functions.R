@@ -78,3 +78,51 @@ kernel_mat <- function(x, l, type = "exponential"){
   }
   return(kernel_matrix)
 }
+
+plot_local_comparisons <- function(L_results, L_results_ICAR, point_alpha = 0.6, point_size = 1.6) {
+
+    df <- data.frame(
+      beta      = as.numeric(L_results$local.beta),
+      beta_icar = as.numeric(L_results_ICAR$local.beta),
+      mlp       = -log10(pmax(as.numeric(L_results$local.pval), 1e-300)),
+      mlp_icar  = -log10(pmax(as.numeric(L_results_ICAR$local.pval), 1e-300))
+    )
+  
+  r1 <- cor(df$beta, df$beta_icar, use = "complete.obs")
+  r2 <- cor(df$mlp,  df$mlp_icar,  use = "complete.obs")
+  
+  library(ggplot2)
+  
+  p1 <- ggplot(df, aes(x = beta, y = beta_icar)) +
+    geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+    coord_equal() +
+    annotate("text", x = -Inf, y = Inf,
+             label = sprintf("r = %.2f", r1), hjust = -0.1, vjust = 1.1) +
+    labs(title = "Local β: HS vs ICAR",
+         x = "Local β (HS)",
+         y = "Local β (ICAR)") +
+    theme_minimal(base_size = 12)
+  
+  p2 <- ggplot(df, aes(x = mlp, y = mlp_icar)) +
+    geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+    coord_equal() +
+    annotate("text", x = -Inf, y = Inf,
+             label = sprintf("r = %.2f", r2), hjust = -0.1, vjust = 1.1) +
+    labs(title = expression(paste(-log[10], " p: HS vs ICAR")),
+         x = expression(-log[10](p)~"(HS)"),
+         y = expression(-log[10](p)~"(ICAR)")) +
+    theme_minimal(base_size = 12)
+  
+  if (requireNamespace("patchwork", quietly = TRUE)) {
+    return(p1 | p2)
+  } else if (requireNamespace("cowplot", quietly = TRUE)) {
+    return(cowplot::plot_grid(p1, p2, ncol = 2))
+  } else {
+    print(p1); print(p2)
+    invisible(list(beta_plot = p1, pval_plot = p2))
+  }
+}
+
+

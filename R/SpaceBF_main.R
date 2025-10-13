@@ -33,7 +33,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   
   if(!is.null(X)){
     if(is.null(dim(X))){
-      X = as.matrix(X)
+      X = spam::as.spam(X)
       print("X is a vector, making it a matrix. ")
     }
   }
