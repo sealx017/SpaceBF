@@ -123,14 +123,8 @@ plot_local_comparisons <- function(L_results, L_results_ICAR, point_alpha = 0.6,
          y = expression(-log[10](p)~"(ICAR)")) +
     theme_minimal(base_size = 12)
   
-  if (requireNamespace("patchwork", quietly = TRUE)) {
-    return(p1 | p2)
-  } else if (requireNamespace("cowplot", quietly = TRUE)) {
-    return(cowplot::plot_grid(p1, p2, ncol = 2))
-  } else {
-    print(p1); print(p2)
-    invisible(list(beta_plot = p1, pval_plot = p2))
-  }
+  
+    return(patchwork::wrap_plots(p1, p2, ncol = 2))
 }
 
 

@@ -206,10 +206,10 @@ print(SG)
 
 ## Fit the NB or Gaussian model using ICAR prior
 
-We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The arguments are the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
+We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The rest of the argumentsare the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
 
 
-```{r fit SpaceBF NB model with ICAR, echo = T, results = T}
+```{r fit SpaceBF NB model with ICAR, echo = T, results = T, out.width="50%"}
 MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
 
 plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
@@ -218,10 +218,10 @@ plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB
 
 ## Comparison between HS and ICAR estimates
 
-We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The arguments are the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
+We compare the local estimates by the HS and ICAR models using the function "plot_local_comparisons". The function takes as input the local results from both models, and produces a scatter plot of the local estimates and p-values.
 
 
-```{r compare HS vs. ICAR, echo = T, results = T}
+```{r compare HS vs. ICAR, echo = T, results = T, out.width="100%"}
 
 L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
 
