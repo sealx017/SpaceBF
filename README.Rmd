@@ -210,7 +210,7 @@ The main function "SpaceBF" fits both the negative binomial (which.model = "NB")
 
 
 ```{r fit SpaceBF NB model, echo = T, results = T}
-MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "ICAR", nIter = 5000)  # decrease nIter for quicker results
+MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
 
 
 print(str(MM_ICAR)) # check the returned list object
