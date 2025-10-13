@@ -4,6 +4,7 @@
 #' @param y2 is the expression vector of gene 2
 #' @param X is the matrix of additional cell-level covariates
 #' @param which.model denotes the model to be used, "NB" or "Gaussian"
+#' @param which.prior denotes the prior to be used, "HS" or "ICAR"
 #' @param nIter is the number of MCMC iterations
 #' @param beta_thres is a hard threshold on the absolute values of beta's
 #' @param nug_sig is the additional precision parameters on beta's, either NULL or a vector of size two
@@ -15,7 +16,7 @@
 #' @export
 
 
-SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", nIter = 5000, 
+SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", nIter = 5000, 
           beta_thres = 10, nug_sig = NULL, which.r.sampler = "CRT", 
           scale_by_sigma = FALSE, verbose = "TRUE"){
   
@@ -41,6 +42,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", nIter = 5000,
   if(length(y1) != length(y2)){print("Stop! Length of y1 and y2 does not match."); break;}
   if(!is.null(X)){if(length(y1) != nrow(X)){print("Stop! Length of y1 and number of rows of X do not match."); break;}}
   if(Matrix::isSymmetric(G) == "FALSE" | max(G) > 1){print("Stop! G needs to be symmetric and binary."); break;}
+  if(sum(G)/2 > (nrow(G) - 1)){print("Your G is not an MST, an ICAR model might be more interpretable.")}
   if(length(y1) != nrow(G)){print("Stop! Length of y1 and number of rows of G do not match."); break;}
   if(verbose == "TRUE" & length(y1) > 2000){print(paste0("Number of cells is more than 2000, you might want to reduce the # MCMC iterations from ", nIter, " to a smaller value."))}
   if(verbose == "TRUE" & length(table(y1)) > length(y1)*(3/4) & which.model == "NB"){print(paste0("The data is possibly continuous and the Gaussian model might be ideal."))}
@@ -61,16 +63,28 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", nIter = 5000,
     }else{nug_sig1 <- nug_sig2 <- nug_sig}
   }else{print("Stop! Provide precision parameters as a vector of two or keep it NULL."); break;}
   
-  if(which.model == "NB"){
+  if(which.model == "NB" & which.prior == "HS"){
     
     fitted_model <- NB_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                     nug_sig2, which.r.sampler, verbose)
   
-  }else{
+  }else if(which.model == "Gaussian" & which.prior == "HS"){
   
     fitted_model <- Gauss_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                     nug_sig2, scale_by_sigma, verbose)
+  }else if(which.model == "NB" & which.prior == "ICAR"){
+    
+    fitted_model <- NB_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
+                                nug_sig2, scale_by_sigma, verbose)
+  }else if(which.model == "Gaussian" & which.prior == "ICAR"){
+    
+    fitted_model <- Gauss_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
+                                nug_sig2, scale_by_sigma, verbose)
+  }else{
+    print("Stop! Your model and prior combination is not implemented.")
+    break;
   }
+
   
   return(fitted_model)
 }
