@@ -200,7 +200,7 @@ NB_ICAR_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       B1_mat <- tau1 * Qicar 
       spam::diag(B1_mat) <- spam::diag(B1_mat) + nug_sig2
       
-      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
       
       #############################################################################
@@ -364,7 +364,7 @@ NB_ICAR_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       B1_mat <- tau1 * Qicar 
       spam::diag(B1_mat) <- spam::diag(B1_mat) + nug_sig2
       
-      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p, sparse = T, doDiag=FALSE),  B1_mat)
+      B1_star_mat <- spam::bdiag.spam(spam::spam(T0, p, p),  B1_mat)
       B1_star_mat <- (B1_star_mat) + t(sqrt_w_K) %*% sqrt_w_K
       
       #############################################################################
