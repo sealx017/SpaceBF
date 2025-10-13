@@ -57,7 +57,7 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   sigma2 <- 1                      # variance of y
   
   # Building ICAR precision structure
-  deg <- rowsum(W_sp)
+  deg <- as.numeric(spam::rowSums(W_sp))
   Qicar <- spam::diag.spam(deg, N, N) - W_sp
   
   ## Connected components
