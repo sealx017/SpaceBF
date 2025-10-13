@@ -282,7 +282,7 @@ print(SG)
 ## Fit the NB or Gaussian model using ICAR prior
 
 We are fitting the NB model this time with an ICAR prior (which.prior =
-“ICAR”). The rest of the argumentsare the same as before, except that
+“ICAR”). The rest of the arguments are the same as before, except that
 *G* now denotes the Delauney network constructed using the MERINGUE
 package.
 
