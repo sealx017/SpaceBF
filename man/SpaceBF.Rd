@@ -10,6 +10,7 @@ SpaceBF(
   X = NULL,
   G,
   which.model = "NB",
+  which.prior = "HS",
   nIter = 5000,
   beta_thres = 10,
   nug_sig = NULL,
@@ -26,6 +27,8 @@ SpaceBF(
 \item{X}{is the matrix of additional cell-level covariates}
 
 \item{which.model}{denotes the model to be used, "NB" or "Gaussian"}
+
+\item{which.prior}{denotes the prior to be used, "HS" or "ICAR"}
 
 \item{nIter}{is the number of MCMC iterations}
 

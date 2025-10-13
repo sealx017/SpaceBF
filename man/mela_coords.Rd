@@ -9,7 +9,7 @@ A data frame with N = 293 rows (spots) and 3 columns (xy coordinates and celltyp
 \describe{
   \item{x}{x co-ordinate of the cell}
   \item{y}{y co-ordinate of the cell}
-  \item{celltypes}{Celltypes detected by the RCTD software based on the gene expression profile}
+  \item{celltypes}{Celltypes detected by RCTD}
 }
 }
 \source{
