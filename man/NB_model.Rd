@@ -2,7 +2,7 @@
 % Please edit documentation in R/NB_MCMC_spam_update.R
 \name{NB_model}
 \alias{NB_model}
-\title{Function for the NB fused model}
+\title{Function for the NB fused model with HS prior}
 \usage{
 NB_model(
   y1,
@@ -40,5 +40,5 @@ NB_model(
 It returns the estimated beta's, r, shrinkage parameters, and deviance
 }
 \description{
-Function for the NB fused model
+Function for the NB fused model with HS prior
 }

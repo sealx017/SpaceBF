@@ -2,7 +2,7 @@
 % Please edit documentation in R/Gauss_MCMC_ICAR.R
 \name{Gauss_ICAR_model}
 \alias{Gauss_ICAR_model}
-\title{Function for the Gaussian fused model}
+\title{Function for the Gaussian fused model with ICAR prior}
 \usage{
 Gauss_ICAR_model(
   y1,
@@ -40,5 +40,5 @@ Gauss_ICAR_model(
 It returns the estimated beta's, sigma, shrinkage parameters, and deviance
 }
 \description{
-Function for the Gaussian fused model
+Function for the Gaussian fused model with ICAR prior
 }

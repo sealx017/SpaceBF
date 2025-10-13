@@ -1,4 +1,4 @@
-#' @title Function for the NB fused model
+#' @title Function for the NB fused model with ICAR prior
 #'
 #' @param y1 is the expression vector of gene 1, gene 1 will be regressed on gene 2
 #' @param y2 is the expression vector of gene 2
@@ -71,7 +71,7 @@ NB_ICAR_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   B0_mat <- B1_mat <- spam::spam(0, nrow = N, ncol = N)  
   
   if(p > 0){
-    T0_sp <-  spam(0, p, p)           # or diag.spam(rep(lambda, p))
+    T0_sp <-  spam::spam(0, p, p)           # or diag.spam(rep(lambda, p))
     B1_star_mat <- spam::bdiag.spam(T0_sp, B1_mat)  # stays in spam-land
   }
   

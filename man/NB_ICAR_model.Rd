@@ -2,7 +2,7 @@
 % Please edit documentation in R/NB_MCMC_ICAR.R
 \name{NB_ICAR_model}
 \alias{NB_ICAR_model}
-\title{Function for the NB fused model}
+\title{Function for the NB fused model with ICAR prior}
 \usage{
 NB_ICAR_model(
   y1,
@@ -40,5 +40,5 @@ NB_ICAR_model(
 It returns the estimated beta's, r, shrinkage parameters, and deviance
 }
 \description{
-Function for the NB fused model
+Function for the NB fused model with ICAR prior
 }

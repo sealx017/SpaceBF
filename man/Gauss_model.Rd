@@ -2,7 +2,7 @@
 % Please edit documentation in R/Gauss_MCMC_spam_update.R
 \name{Gauss_model}
 \alias{Gauss_model}
-\title{Function for the Gaussian fused model}
+\title{Function for the Gaussian fused model with HS prior}
 \usage{
 Gauss_model(
   y1,
@@ -40,5 +40,5 @@ Gauss_model(
 It returns the estimated beta's, sigma, shrinkage parameters, and deviance
 }
 \description{
-Function for the Gaussian fused model
+Function for the Gaussian fused model with HS prior
 }
