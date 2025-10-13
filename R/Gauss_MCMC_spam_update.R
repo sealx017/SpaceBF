@@ -58,15 +58,16 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   # Initialize precision matrices using spam
   B0_mat <- B1_mat <- spam::spam(0, nrow = N, ncol = N)  
   
-  if(p == 1){
-    B1_star_mat = Matrix::bdiag(1,  B1_mat)
-  }else if(p > 1){B1_star_mat = spam::bdiag(spam::spam(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
+  if(p > 0){
+    T0_sp <-  spam(0, p, p)           # or diag.spam(rep(lambda, p))
+    B1_star_mat <- spam::bdiag.spam(T0_sp, B1_mat)  # stays in spam-land
+  }
   
-  zeta40 = zeta41 = rep(0.1, half_p_mst)             # local shrinkage parameters
-  gamma40 = gamma41 = rep(0.1, half_p_mst)           # local shrinkage latent parameters
-  tau240 = tau241 = 0.5                              # global shrinkage parameters    
-  epsilon20 = epsilon21 =  1                         # global shrinkage latent parameters  
-  T0 = 0.1                                           # prior precision of the additional covariates
+  zeta40 <- zeta41 <- rep(0.1, half_p_mst)             # local shrinkage parameters
+  gamma40 <- gamma41 <- rep(0.1, half_p_mst)           # local shrinkage latent parameters
+  tau240 <- tau241 <- 0.5                              # global shrinkage parameters    
+  epsilon20 <- epsilon21 <-  1                         # global shrinkage latent parameters  
+  T0 = 0.1                                             # prior precision of the additional covariates
   
   
   l <- rep(0, N)                                     # latent vector for CRT-based update of r

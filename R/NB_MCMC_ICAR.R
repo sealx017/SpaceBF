@@ -70,10 +70,10 @@ NB_ICAR_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   # Initialize precision matrices using spam
   B0_mat <- B1_mat <- spam::spam(0, nrow = N, ncol = N)  
   
-  if(p == 1){
-    B1_star_mat = Matrix::bdiag(1,  B1_mat)
-  }else if(p > 1){B1_star_mat = spam::bdiag(spam::spam(0, p, p, sparse = T, doDiag=FALSE),  B1_mat)}
-  
+  if(p > 0){
+    T0_sp <-  spam(0, p, p)           # or diag.spam(rep(lambda, p))
+    B1_star_mat <- spam::bdiag.spam(T0_sp, B1_mat)  # stays in spam-land
+  }
   
   T0 <- 0.1                                          # prior precision of the additional covariates
   l <- rep(0, N)                                     # latent vector for CRT-based update of r
