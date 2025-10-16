@@ -230,37 +230,46 @@ plot_local_comparisons <- function(L_results_first = L_results, L_results_second
   r1 <- cor(df$beta, df$beta_icar, use = "complete.obs")
   r2 <- cor(df$mlp,  df$mlp_icar,  use = "complete.obs")
   
+  library(patchwork)
   library(ggplot2)
+  
+  # common theme to normalize spacing
+  thm <- theme_minimal(base_size = 12) +
+    theme(
+      legend.position = "none",
+      plot.title.position = "plot",
+      plot.title = element_text(margin = margin(b = 4)),
+      plot.subtitle = element_text(margin = margin(b = 6)),
+      plot.margin = margin(6, 6, 6, 6)
+    )
   
   p1 <- ggplot(df, aes(x = beta, y = beta_icar)) +
     geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
     coord_equal() +
-    annotate("text", x = -Inf, y = Inf,
-             label = sprintf("r = %.2f", r1), hjust = -0.1, vjust = 1.1) +
-    labs(title = "Local β: First vs Second Method",
-         x = "Local β (first method)",
-         y = "Local β (second method)") +
-    theme_minimal(base_size = 12)
+    labs(
+      title = "Local β: First vs Second Method",
+      subtitle = sprintf("r = %.2f", r1),
+      x = "Local β (first method)",
+      y = "Local β (second method)"
+    ) +
+    thm
   
   p2 <- ggplot(df, aes(x = mlp, y = mlp_icar)) +
     geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
     coord_equal() +
-    annotate("text", x = -Inf, y = Inf,
-             label = sprintf("r = %.2f", r2), hjust = -0.1, vjust = 1.1) +
-    labs(title = expression(paste(-log[10], " p: First vs Second Method")),
-         x = expression(-log[10](p)~"(First)"),
-         y = expression(-log[10](p)~"(Second)")) +
-    theme_minimal(base_size = 12)
+    labs(
+      title = expression(paste(-log[10], " p: First vs Second Method")),
+      subtitle = sprintf("r = %.2f", r2),
+      x = expression(-log[10](p)~"(First)"),
+      y = expression(-log[10](p)~"(Second)")
+    ) +
+    thm
   
-  #p1 <- p1 + theme(plot.margin = margin(5.5,5.5,5.5,5.5))
-  #p2 <- p2 + theme(plot.margin = margin(5.5,5.5,5.5,5.5))
-  
-  # Align panels (both axes) then arrange with equal widths
-  aligned <- patchwork::wrap_plots(p1, p2)
-  
-  return(aligned)
+  # arrange with equal widths
+  wrapped <- p1 + p2 + plot_layout(nrow = 1, widths = c(1, 1))
+  return(wrapped)
 }
 
 
