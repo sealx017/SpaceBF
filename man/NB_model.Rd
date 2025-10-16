@@ -24,6 +24,8 @@ NB_model(
 
 \item{X}{is the matrix of additional cell-level covariates}
 
+\item{G}{is the adjacency matrix, MST or general graph}
+
 \item{nIter}{is the number of MCMC iterations}
 
 \item{beta_thres}{is a hard threshold on the absolute values of beta's}

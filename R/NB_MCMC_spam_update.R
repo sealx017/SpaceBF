@@ -3,6 +3,7 @@
 #' @param y1 is the expression vector of gene 1, gene 1 will be regressed on gene 2
 #' @param y2 is the expression vector of gene 2
 #' @param X is the matrix of additional cell-level covariates
+#' @param G is the adjacency matrix, MST or general graph
 #' @param nIter is the number of MCMC iterations
 #' @param beta_thres is a hard threshold on the absolute values of beta's
 #' @param nug_sig1 is the additional precision on beta0's
@@ -65,7 +66,7 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   gamma40 <- gamma41 <- rep(0.1, half_p_mst)           # local shrinkage latent parameters
   tau240 <- tau241 <- 0.5                              # global shrinkage parameters    
   epsilon20 <- epsilon21 <-  1                         # global shrinkage latent parameters  
-  T0 <- 0.1                                             # prior precision of the additional covariates
+  T0 <- 0.1                                            # prior precision of the additional covariates
  
  
   l <- rep(0, N)                                     # latent vector for CRT-based update of r
@@ -156,10 +157,10 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
         zeta41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1/gamma41 + beta_diff1/(2 * tau241))
         gamma41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1 + 1/zeta41)
         
-        tau240 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
+        tau240 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
         epsilon20 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau240)
         
-        tau241 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
+        tau241 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
         epsilon21 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau241)
         
         
@@ -252,10 +253,10 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       zeta41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1/gamma41 + beta_diff1/(2 * tau241))
       gamma41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1 + 1/zeta41)
       
-      tau240 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
+      tau240 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
       epsilon20 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau240)
       
-      tau241 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
+      tau241 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
       epsilon21 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau241)
       
       
@@ -354,10 +355,10 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       zeta41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1/gamma41 + beta_diff1/(2 * tau241))
       gamma41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1 + 1/zeta41)
       
-      tau240 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
+      tau240 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
       epsilon20 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau240)
       
-      tau241 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
+      tau241 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
       epsilon21 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau241)
       
       
@@ -457,10 +458,10 @@ NB_model <-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       zeta41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1/gamma41 + beta_diff1/(2 * tau241))
       gamma41 <- MCMCpack::rinvgamma(half_p_mst, 1, scale = 1 + 1/zeta41)
       
-      tau240 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
+      tau240 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon20 + sum(beta_diff0 / zeta40) / 2)
       epsilon20 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau240)
       
-      tau241 <- MCMCpack::rinvgamma(1, (half_p_mst + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
+      tau241 <- MCMCpack::rinvgamma(1, (N - 1 + 1) / 2, scale = 1/epsilon21 + sum(beta_diff1 / zeta41) / 2)
       epsilon21 <- MCMCpack::rinvgamma(1, 1, scale = 1 + 1/tau241)
       
       

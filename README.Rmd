@@ -229,6 +229,33 @@ plot_local_comparisons(L_results, L_results_ICAR)
 
 ```
 
+## Fit the spatial horseshoe model with a general graph (not MST)
+
+We are fitting the NB model with the spatial horseshoe prior coupled with the Delaunay network instead of the MST.
+
+
+```{r fit SpaceBF NB model with horseshoe on Delaunay, echo = T, results = T, out.width="80%"}
+MM_HS_Del <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "HS", nIter = 5000) 
+
+plot_estimates(MM_HS_Del$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
+
+```
+
+## Comparison between two HS models, one based on MST vs. Delaunay, and ICAR model
+
+We plot the results in a pairwise fashion.
+
+
+```{r compare HS MST vs. HS Delaunay vs. ICAR, echo = T, results = T, out.width="80%"}
+
+L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)],  local.p.ths = 0.9)
+
+plot_local_comparisons(L_results, L_results_Del)
+plot_local_comparisons(L_results_ICAR, L_results_Del)
+
+```
+
+
 
 ## References
 
