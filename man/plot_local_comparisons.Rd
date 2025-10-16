@@ -8,7 +8,7 @@ plot_local_comparisons(
   L_results_first = L_results,
   L_results_second = L_results_ICAR,
   point_alpha = 0.6,
-  point_size = 1.6
+  point_size = 0.5
 )
 }
 \arguments{

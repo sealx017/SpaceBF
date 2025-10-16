@@ -218,7 +218,7 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
 #'
 #' @export
 
-plot_local_comparisons <- function(L_results_first = L_results, L_results_second = L_results_ICAR, point_alpha = 0.6, point_size = 1.6) {
+plot_local_comparisons <- function(L_results_first = L_results, L_results_second = L_results_ICAR, point_alpha = 0.6, point_size = 0.5) {
   
   df <- data.frame(
     beta      = as.numeric(L_results_first$local.beta),
