@@ -328,7 +328,7 @@ plot_estimates(MM_HS_Del$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "
 
 <img src="README_files/figure-gfm/fit SpaceBF NB model with horseshoe on Delaunay-1.png" width="60%" />
 
-## Comparison between two HS models, one based on MST vs. Delaunay, and ICAR model
+## Comparison between three models: HS models with MST and Delaunay, and ICAR model
 
 We plot the results in a pairwise fashion.
 
