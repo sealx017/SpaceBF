@@ -27,7 +27,8 @@ variables, based on a spatial fused horseshoe prior.
 **Oct 16, 2025 update: 1. ICAR version of the model is provided. It
 could be marginally faster for general spatial networks, such as k-NN or
 Delauney network. 2. Horseshoe models now support general networks as
-well.**
+well, please click the “README.md” file to view the documentation
+properly.**
 
 ## Install and load SpaceBF
 

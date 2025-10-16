@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 The *R* package implements the models proposed in the manuscript "SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches in Spatial Omics Datasets." It enables the analysis of spatially varying co-expression between pairs of molecules, such as ligand-receptor interactions, in spatial transcriptomics (ST) and mass spectrometry imaging (MSI) datasets. It is easily applicable to broader spatial datasets, to study spatially varying interaction between any two variables, based on a spatial fused horseshoe prior. 
 
-**Oct 16, 2025 update: 1. ICAR version of the model is provided. It could be marginally faster for general spatial networks, such as k-NN or Delauney network. 2. Horseshoe models now support general networks as well.**
+**Oct 16, 2025 update: 1. ICAR version of the model is provided. It could be marginally faster for general spatial networks, such as k-NN or Delauney network. 2. Horseshoe models now support general networks as well, please click the "README.md" file to view the documentation properly.**
 
 ## Install and load SpaceBF
 
