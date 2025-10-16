@@ -210,3 +210,57 @@ plot_estimates <- function(Beta, y1, y2, coords, which.model = "NB",
 }
 
 
+#' @title Function for comparing HS vs, ICAR local coefficients and p-values
+#'
+#' @param L_results_first is the output of local_res() function on the slope coefficients from the first model
+#' @param L_results_second is the output of local_res() function on the slope coefficients from the second model
+#' @return The kernel covariance matrix of dimension N x N, between N locations
+#'
+#' @export
+
+plot_local_comparisons <- function(L_results_first = L_results, L_results_second = L_results_ICAR, point_alpha = 0.6, point_size = 1.6) {
+  
+  df <- data.frame(
+    beta      = as.numeric(L_results_first$local.beta),
+    beta_icar = as.numeric(L_results_second$local.beta),
+    mlp       = -log10(pmax(as.numeric(L_results_first$local.pval), 1e-300)),
+    mlp_icar  = -log10(pmax(as.numeric(L_results_second$local.pval), 1e-300))
+  )
+  
+  r1 <- cor(df$beta, df$beta_icar, use = "complete.obs")
+  r2 <- cor(df$mlp,  df$mlp_icar,  use = "complete.obs")
+  
+  library(ggplot2)
+  
+  p1 <- ggplot(df, aes(x = beta, y = beta_icar)) +
+    geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+    coord_equal() +
+    annotate("text", x = -Inf, y = Inf,
+             label = sprintf("r = %.2f", r1), hjust = -0.1, vjust = 1.1) +
+    labs(title = "Local β: First vs Second Method",
+         x = "Local β (first method)",
+         y = "Local β (second method)") +
+    theme_minimal(base_size = 12)
+  
+  p2 <- ggplot(df, aes(x = mlp, y = mlp_icar)) +
+    geom_point(alpha = point_alpha, size = point_size, na.rm = TRUE) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+    coord_equal() +
+    annotate("text", x = -Inf, y = Inf,
+             label = sprintf("r = %.2f", r2), hjust = -0.1, vjust = 1.1) +
+    labs(title = expression(paste(-log[10], " p: First vs Second Method")),
+         x = expression(-log[10](p)~"(First)"),
+         y = expression(-log[10](p)~"(Second)")) +
+    theme_minimal(base_size = 12)
+  
+  #p1 <- p1 + theme(plot.margin = margin(5.5,5.5,5.5,5.5))
+  #p2 <- p2 + theme(plot.margin = margin(5.5,5.5,5.5,5.5))
+  
+  # Align panels (both axes) then arrange with equal widths
+  aligned <- patchwork::wrap_plots(p1, p2)
+  
+  return(aligned)
+}
+
+

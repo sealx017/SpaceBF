@@ -24,12 +24,10 @@ imaging (MSI) datasets. It is easily applicable to broader spatial
 datasets, to study spatially varying interaction between any two
 variables, based on a spatial fused horseshoe prior.
 
-**Oct 13, 2025 update: now an ICAR version of the model is provided. It
-is expected to be faster and more interpretable for general spatial
-networks, such as k-NN or Delauney network. However, it misses the
-piecewise constant structure that the MST-based horseshoe model can
-capture, crucial for understanding the subtle changes in local
-biology.**
+**Oct 16, 2025 update: 1. ICAR version of the model is provided. It
+could be marginally faster for general spatial networks, such as k-NN or
+Delauney network. 2. Horseshoe models now support general networks as
+well.**
 
 ## Install and load SpaceBF
 
@@ -129,7 +127,7 @@ covariance matrix.
 set.seed(2025*2025)
 
 # generate bivariate Gaussian data across space: (y1, y2)^T, y1, y2 are N x 1
-nu = 0.5            # correlation term is highly positive, making it 0 should give us NULL results 
+nu <- 0.5            # correlation term is highly positive, making it 0 should give us NULL results 
 
 y_latent_both <- c(MASS::mvrnorm(1, rep(0, 2*N), 
 kronecker(matrix(c(1, nu, nu, 1), nrow = 2), K))) #Kronecker product sturcture
