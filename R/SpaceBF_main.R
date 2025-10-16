@@ -42,7 +42,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   if(length(y1) != length(y2)){print("Stop! Length of y1 and y2 does not match."); break;}
   if(!is.null(X)){if(length(y1) != nrow(X)){print("Stop! Length of y1 and number of rows of X do not match."); break;}}
   if(Matrix::isSymmetric(G) == "FALSE" | max(G) > 1){print("Stop! G needs to be symmetric and binary."); break;}
-  if(sum(G)/2 > (nrow(G) - 1)){print("Your G is not an MST, an ICAR model might be more interpretable.")}
+  if(sum(G)/2 > (nrow(G) - 1)){print("Your G is not an MST, the algorithm might take more run-time.")}
   if(length(y1) != nrow(G)){print("Stop! Length of y1 and number of rows of G do not match."); break;}
   if(verbose == "TRUE" & length(y1) > 2000){print(paste0("Number of cells is more than 2000, you might want to reduce the # MCMC iterations from ", nIter, " to a smaller value."))}
   if(verbose == "TRUE" & length(table(y1)) > length(y1)*(3/4) & which.model == "NB"){print(paste0("The data is possibly continuous and the Gaussian model might be ideal."))}
