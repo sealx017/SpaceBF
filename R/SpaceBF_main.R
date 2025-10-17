@@ -69,9 +69,9 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   if(which.model == "NB" & which.prior == "HS"){
     
     if(sum(G)/2 == (nrow(G) - 1)){
-    print(paste0("NB HS with MST will start with prior variances", 
+    print(paste0("NB HS with MST will start with prior precision: ", 
                  nug_sig1, ", ", nug_sig2, "."))
-    }else{print(paste0("NB HS with general graph will start with prior variances", 
+    }else{print(paste0("NB HS with general graph will start with prior precision: ", 
                        nug_sig1, ", ", nug_sig2, "."))}
     
     fitted_model <- NB_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
@@ -80,20 +80,20 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   }else if(which.model == "Gaussian" & which.prior == "HS"){
     
     if(sum(G)/2 == (nrow(G) - 1)){
-      print(paste0("Gauss HS with MST will start with prior variances", 
+      print(paste0("Gauss HS with MST will start with prior precision:: ", 
                    nug_sig1, ", ", nug_sig2, "."))
-    }else{print(paste0("Gauss HS with general graph will start with prior variances", 
+    }else{print(paste0("Gauss HS with general graph will start with prior precision: ", 
                    nug_sig1, ", ", nug_sig2, "."))}
     
     fitted_model <- Gauss_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                     nug_sig2, scale_by_sigma, verbose)
   }else if(which.model == "NB" & which.prior == "ICAR"){
-    print(paste0("NB ICAR will start with prior variances", 
+    print(paste0("NB ICAR will start with prior precision: ", 
                  nug_sig1, ", ", nug_sig2, "."))
     fitted_model <- NB_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                                 nug_sig2, which.r.sampler, verbose)
   }else if(which.model == "Gaussian" & which.prior == "ICAR"){
-    print(paste0("Gauss ICAR will start with prior variances", 
+    print(paste0("Gauss ICAR will start with prior precision: ", 
                  nug_sig1, ", ", nug_sig2, "."))
     fitted_model <- Gauss_ICAR_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                                 nug_sig2, scale_by_sigma, verbose)
