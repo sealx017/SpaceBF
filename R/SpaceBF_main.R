@@ -47,16 +47,19 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   if(verbose == "TRUE" & length(y1) > 2000){print(paste0("Number of cells is more than 2000, you might want to reduce the # MCMC iterations from ", nIter, " to a smaller value."))}
   if(verbose == "TRUE" & length(table(y1)) > length(y1)*(3/4) & which.model == "NB"){print(paste0("The data is possibly continuous and the Gaussian model might be ideal."))}
   
-  if(is.null(nug_sig)){
+  if(is.null(nug_sig) & sum(G)/2 == (nrow(G) - 1)){
   if(mean(y1 == 0) > 0.5 | mean(y2 == 0) > 0.75){   # if there are a lot of 0 values either in y1 or y2,
                                                     # amplifying the non-identifiability issue,                                              
-                                                    # put extra regularization on the beta's
-    nug_sig1 <- 0.2
-    nug_sig2 <- 0.2   
+                                                    # put extra regularization on the beta's, particularly for MST-based HS
+    nug_sig1 <- 2e-1
+    nug_sig2 <- 2e-1   
   }else{
-    nug_sig1 <- 0.1
-    nug_sig2 <- 0.1
-  }}else if(is.vector(nug_sig)){
+    nug_sig1 <- 1e-1
+    nug_sig2 <- 1e-1
+  }}else if(is.null(nug_sig) & sum(G)/2 > (nrow(G) - 1)){
+    nug_sig1 <- 1e-10
+    nug_sig2 <- 1e-10
+  }else if(is.vector(nug_sig)){
     if(length(nug_sig) > 1){
     nug_sig1 <- nug_sig[1]
     nug_sig2 <- nug_sig[2]
@@ -65,11 +68,23 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   
   if(which.model == "NB" & which.prior == "HS"){
     
+    if(sum(G)/2 == (nrow(G) - 1)){
+    print(paste0("NB HS with MST will start with prior variances", 
+                 nug_sig1, ", ", nug_sig2, "."))
+    }else{print(paste0("NB HS with general graph will start with prior variances", 
+                       nug_sig1, ", ", nug_sig2, "."))}
+    
     fitted_model <- NB_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                     nug_sig2, which.r.sampler, verbose)
   
   }else if(which.model == "Gaussian" & which.prior == "HS"){
-  
+    
+    if(sum(G)/2 == (nrow(G) - 1)){
+      print(paste0("Gauss HS with MST will start with prior variances", 
+                   nug_sig1, ", ", nug_sig2, "."))
+    }else{print(paste0("Gauss HS with general graph will start with prior variances", 
+                   nug_sig1, ", ", nug_sig2, "."))}
+    
     fitted_model <- Gauss_model(y1, y2, X, G, nIter, beta_thres, nug_sig1, 
                     nug_sig2, scale_by_sigma, verbose)
   }else if(which.model == "NB" & which.prior == "ICAR"){
