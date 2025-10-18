@@ -73,7 +73,7 @@ mst.adjmat <- mst.out[[1]]      # MST adjacency matrix, to be used as G in the m
 print_mst(mst.out, coords[, 1:2])
 
 # optional network to compute MERINGUE cross-correlation
-w <- MERINGUE::getSpatialNeighbors(coords[, 1:2], filterDist = 5) # constructing Delauney network using  MERINGUE
+w <- MERINGUE::getSpatialNeighbors(coords[, 1:2], filterDist = 3) # constructing Delauney network using  MERINGUE
 # plotNetwork(coords[, 1:2], w)
 ```
 
