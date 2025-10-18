@@ -50,7 +50,7 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
   if(is.null(nug_sig)){
   if(mean(y1 == 0) > 0.5 | mean(y2 == 0) > 0.75){   # if there are a lot of 0 values either in y1 or y2,
                                                     # amplifying the non-identifiability issue,                                              
-                                                    # put extra regularization on the beta's, particularly for MST-based HS
+                                                    # put extra regularization on the beta's
     nug_sig1 <- 2e-2
     nug_sig2 <- 2e-2   
   }else{
