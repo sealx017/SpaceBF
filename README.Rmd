@@ -139,14 +139,13 @@ print(str(MM)) # check the returned list object
 The above function returns a list of several objects, including a matrix of beta estimates, with dimension *nIter x (2N + p)*. The last *N* columns correspond to the slope estimates at *N* locations. We randomly select 4 of these locations, and check the slope convergence plots. 
 
 
-```{r MCMC diagnostic plots, echo = T, results = T,  out.width = "90%",  out.height = "70%"}
+```{r MCMC diagnostic plots, echo = T, results = T,  out.width = "50%",  out.height = "70%"}
 set.seed(2025)
 
-ran_sam = sample(1:N, 3)
-par(mfrow = c(1, 3))
+ran_sam = sample(1:N, 2)
+par(mfrow = c(1, 2))
 MCMC_plot(MM$Beta[, (N + ran_sam[1])])
 MCMC_plot(MM$Beta[, (N + ran_sam[2])])
-MCMC_plot(MM$Beta[, (N + ran_sam[3])])
 
 ```
 

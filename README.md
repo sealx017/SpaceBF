@@ -180,14 +180,13 @@ select 4 of these locations, and check the slope convergence plots.
 ``` r
 set.seed(2025)
 
-ran_sam = sample(1:N, 3)
-par(mfrow = c(1, 3))
+ran_sam = sample(1:N, 2)
+par(mfrow = c(1, 2))
 MCMC_plot(MM$Beta[, (N + ran_sam[1])])
 MCMC_plot(MM$Beta[, (N + ran_sam[2])])
-MCMC_plot(MM$Beta[, (N + ran_sam[3])])
 ```
 
-<img src="README_files/figure-gfm/MCMC diagnostic plots-1.png" width="90%" height="70%" />
+<img src="README_files/figure-gfm/MCMC diagnostic plots-1.png" width="50%" height="70%" />
 
 ## Perform significance tests
 
