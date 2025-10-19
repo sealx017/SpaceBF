@@ -7,7 +7,7 @@
 #'
 
 MCMC_plot <-function(x){
-  plot(x, type = "l", ylim = c(-1.2*max(abs(x)), 1.2*max(abs(x))))
+  plot(x, type = "l", ylim = c(-1*max(abs(x)), 1*max(abs(x))))
   abline(h = mean(x), col = "green")
 }
 
