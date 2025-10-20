@@ -158,7 +158,7 @@ G_results <- global_res(MM$Beta[, -c(1:N)], summary = "median", local.p.ths = 0.
 print(G_results)  # test should be significant if nu is highly +ve or -ve
 
 
-L_results <- local_res(MM$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results <- local_res(MM$Beta[, -c(1:N)])
 print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 ```
 
@@ -221,7 +221,7 @@ We compare the local estimates by the HS and ICAR models using the function "plo
 
 ```{r compare HS vs. ICAR, echo = T, results = T, out.width="60%"}
 
-L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)])
 
 plot_local_comparisons(L_results, L_results_ICAR)
 
@@ -246,7 +246,7 @@ We plot the results in a pairwise fashion.
 
 ```{r compare HS MST vs. HS Delaunay vs. ICAR, echo = T, results = T, out.width="60%"}
 
-L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)])
 
 plot_local_comparisons(L_results, L_results_Del)
 plot_local_comparisons(L_results_ICAR, L_results_Del)

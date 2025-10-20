@@ -222,8 +222,8 @@ plot_local_comparisons <- function(L_results_first = L_results, L_results_second
   df <- data.frame(
     beta      = as.numeric(L_results_first$local.beta),
     beta_icar = as.numeric(L_results_second$local.beta),
-    mlp       = -log10(pmax(as.numeric(L_results_first$local.pval), 1e-300)),
-    mlp_icar  = -log10(pmax(as.numeric(L_results_second$local.pval), 1e-300))
+    mlp       = -log10(pmax(as.numeric(L_results_first$local.pval), 1e-10)),
+    mlp_icar  = -log10(pmax(as.numeric(L_results_second$local.pval), 1e-10))
   )
   
   r1 <- cor(df$beta, df$beta_icar, use = "complete.obs")
