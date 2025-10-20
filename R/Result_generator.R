@@ -71,14 +71,13 @@ global_res <- function(Beta, summary = "median", local.p.ths = 0.95){
 #'
 #' @param Beta is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations
 #' @param summary is the type of posterior summary measure to use, either "median" or "mean"
-#' @param local.p.ths is the size of the credible interval
 #' @return a data.frame of local beta estimates (N rows for N locations), local p-values, and 
 #' Geweke convergence-diagnostic statistic for each local beta.
 #'
 #' @export
 #'
 
-local_res <- function(Beta, summary = "median", local.p.ths = 0.95){
+local_res <- function(Beta, summary = "median"){
   
   # compute posterior mean/median of beta's
   if(summary == "median"){

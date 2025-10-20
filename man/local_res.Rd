@@ -4,14 +4,12 @@
 \alias{local_res}
 \title{Perform local significance test}
 \usage{
-local_res(Beta, summary = "median", local.p.ths = 0.95)
+local_res(Beta, summary = "median")
 }
 \arguments{
 \item{Beta}{is a dataframe of dimension (nIter x N) with MCMC beta samples, for N cells/locations}
 
 \item{summary}{is the type of posterior summary measure to use, either "median" or "mean"}
-
-\item{local.p.ths}{is the size of the credible interval}
 }
 \value{
 a data.frame of local beta estimates (N rows for N locations), local p-values, and 
