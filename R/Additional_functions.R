@@ -26,6 +26,33 @@ MST_construction <- function(x, type = "random"){
   return(list(mstobj, type))
 }
 
+#' @title Function for kNN construction
+#'
+#' @param x is a dist object or an Euclidean distance matrix
+#' @param type of the MST, random or direct
+#' @return It returns the MST inside a list
+#'
+#' @export
+
+kNN_construction <- function(coords, k = 3){
+  nn <- FNN::get.knn(coords, k = k)
+  ed <- do.call(rbind, lapply(1:nrow(coords), function(i){
+    cbind(i, nn$nn.index[i, ])
+  }))
+  ed <- unique(t(apply(ed, 1, sort)))     # undirected, unique edges
+  g  <- igraph::graph_from_edgelist(ed, directed = FALSE)
+  w_knn <- igraph::as_adjacency_matrix(g, type = "both", attr = NULL, sparse = TRUE) # adjacency matrix
+  
+  p <- plot(g,
+       layout = as.matrix(coords),
+       add = TRUE, rescale = FALSE,
+       vertex.size = 0, vertex.label = NA, vertex.frame.color = NA,
+       edge.color = "steelblue", edge.width = 1.2)
+  
+  return(list(w_knn, p))
+}
+
+
 #' @import igraph
 #' @import ggraph
 #' @import ggplot2

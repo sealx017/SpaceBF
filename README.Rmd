@@ -44,8 +44,8 @@ library(SpaceBF)
 
 
 # # List of packages providing functional help
-# library(Matrix); library(igraph);  library(sf);
-# library(BayesLogit); library(bayestestR);
+# library(Matrix); library(igraph);  library(sf); library(FNN);
+# library(BayesLogit); library(bayestestR); 
 # library(fossil); library(coda); library(MCMCpack); library(svMisc);
 # library(MERINGUE); library(SpaGene);
 
@@ -204,11 +204,29 @@ print(SG)
 
 ## Fit the NB or Gaussian model using ICAR prior
 
-We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The rest of the arguments are the same as before, except that *G* now denotes the Delauney network constructed using the MERINGUE package.
+We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR"). The rest of the arguments are the same as before, except that *G* now denotes a mutual kNN network (with k = 3).
 
 
 ```{r fit SpaceBF NB model with ICAR, echo = T, results = T, out.width="60%"}
-MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
+
+# construct a mutual 3-NN graph
+k <- 3
+nn <- FNN::get.knn(coords[, 1:2], k = k)
+ed <- do.call(rbind, lapply(1:nrow(coords), function(i){
+  cbind(i, nn$nn.index[i, ])
+}))
+ed <- unique(t(apply(ed, 1, sort)))     # undirected, unique edges
+g  <- igraph::graph_from_edgelist(ed, directed = FALSE)
+
+w_knn <- igraph::as_adjacency_matrix(g, type = "both", attr = NULL, sparse = TRUE)  # 3-NN adjacency matrix
+plot(coords[, 1:2], asp = 1, pch = 16, cex = 0.6, col = "grey30",
+     xlab = "x", ylab = "y")
+plot(w_knn, coords, add = TRUE, col = "steelblue", lwd = 1.2)
+title("kNN neighbor graph")
+
+
+# ICAR model fitting
+MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
 
 plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
@@ -229,27 +247,27 @@ plot_local_comparisons(L_results, L_results_ICAR)
 
 ## Fit the spatial horseshoe model with a general graph (not MST)
 
-We are fitting the NB model with the spatial horseshoe prior coupled with the Delaunay network instead of the MST.
+We are fitting the NB model with the spatial horseshoe prior coupled with the kNN network instead of the MST.
 
 
 ```{r fit SpaceBF NB model with horseshoe on Delaunay, echo = T, results = T, out.width="60%"}
-MM_HS_Del <- SpaceBF(y1, y2, X = NULL, G = w, which.model = "NB", which.prior = "HS", nIter = 5000) 
+MM_HS_kNN <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "HS", nIter = 5000) 
 
-plot_estimates(MM_HS_Del$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
+plot_estimates(MM_HS_kNN$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
 ```
 
-## Comparison between three models: HS models with MST and Delaunay, and ICAR model
+## Comparison between three models: HS models with MST and kNN, and ICAR model
 
 We plot the results in a pairwise fashion.
 
 
 ```{r compare HS MST vs. HS Delaunay vs. ICAR, echo = T, results = T, out.width="60%"}
 
-L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)])
+L_results_HS_kNN <- local_res(MM_HS_kNN$Beta[, -c(1:N)])
 
-plot_local_comparisons(L_results, L_results_Del)
-plot_local_comparisons(L_results_ICAR, L_results_Del)
+plot_local_comparisons(L_results, L_results_HS_kNN)
+plot_local_comparisons(L_results_ICAR, L_results_HS_kNN)
 
 ```
 

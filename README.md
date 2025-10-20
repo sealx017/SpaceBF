@@ -205,7 +205,7 @@ print(G_results)  # test should be significant if nu is highly +ve or -ve
 # var1   0.3274669 3.509168e-06               202          0.8682875
 
 
-L_results <- local_res(MM$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results <- local_res(MM$Beta[, -c(1:N)])
 print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 #   local.beta local.pval Geweke.local.beta
 # 1  0.3299877 0.09477831         0.8919659
@@ -306,7 +306,7 @@ estimates and p-values.
 
 ``` r
 
-L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)])
 
 plot_local_comparisons(L_results, L_results_ICAR)
 ```
@@ -336,7 +336,7 @@ We plot the results in a pairwise fashion.
 
 ``` r
 
-L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)],  local.p.ths = 0.9)
+L_results_Del <- local_res(MM_HS_Del$Beta[, -c(1:N)])
 
 plot_local_comparisons(L_results, L_results_Del)
 ```

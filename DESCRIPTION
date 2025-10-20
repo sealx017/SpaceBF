@@ -22,6 +22,7 @@ Imports:
  patchwork,
  spdep,
  sf,
+ FNN,
  BayesLogit,
  MCMCpack,
  svMisc,
