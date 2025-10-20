@@ -210,20 +210,13 @@ We are fitting the NB model this time with an ICAR prior (which.prior = "ICAR").
 ```{r fit SpaceBF NB model with ICAR, echo = T, results = T, out.width="60%"}
 
 # construct a mutual 3-NN graph
-k <- 3
-nn <- FNN::get.knn(coords[, 1:2], k = k)
-ed <- do.call(rbind, lapply(1:nrow(coords), function(i){
-  cbind(i, nn$nn.index[i, ])
-}))
-ed <- unique(t(apply(ed, 1, sort)))     # undirected, unique edges
-g  <- igraph::graph_from_edgelist(ed, directed = FALSE)
+kNN_obj <- kNN_construction(coords[, 1:2], k = 3)
+w_knn <- as.matrix(kNN_obj[[1]])
 
-w_knn <- igraph::as_adjacency_matrix(g, type = "both", attr = NULL, sparse = TRUE)  # 3-NN adjacency matrix
-plot(coords[, 1:2], asp = 1, pch = 16, cex = 0.6, col = "grey30",
-     xlab = "x", ylab = "y")
-plot(w_knn, coords, add = TRUE, col = "steelblue", lwd = 1.2)
-title("kNN neighbor graph")
-
+# plot the kNN
+plot(kNN_obj[[2]], layout = as.matrix(coords),add = TRUE, rescale = FALSE,
+vertex.size = 0, vertex.label = NA, vertex.frame.color = NA,
+edge.color = "steelblue", edge.width = 1.2)
 
 # ICAR model fitting
 MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "ICAR", nIter = 5000) 

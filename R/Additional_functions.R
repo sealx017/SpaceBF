@@ -42,14 +42,7 @@ kNN_construction <- function(coords, k = 3){
   ed <- unique(t(apply(ed, 1, sort)))     # undirected, unique edges
   g  <- igraph::graph_from_edgelist(ed, directed = FALSE)
   w_knn <- igraph::as_adjacency_matrix(g, type = "both", attr = NULL, sparse = TRUE) # adjacency matrix
-  
-  p <- plot(g,
-       layout = as.matrix(coords),
-       add = TRUE, rescale = FALSE,
-       vertex.size = 0, vertex.label = NA, vertex.frame.color = NA,
-       edge.color = "steelblue", edge.width = 1.2)
-  
-  return(list(w_knn, p))
+  return(list(w_knn, g))
 }
 
 
