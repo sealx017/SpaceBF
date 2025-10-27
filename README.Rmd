@@ -128,7 +128,7 @@ The main function "SpaceBF" fits both the negative binomial (which.model = "NB")
 
 
 ```{r fit SpaceBF NB model, echo = T, results = T}
-MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000)  # decrease nIter for quicker results
+MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000, verbose = F)  # decrease nIter for quicker results
 
 
 print(str(MM)) # check the returned list object
@@ -214,7 +214,7 @@ kNN_obj <- kNN_construction(coords[, 1:2], k = 3)
 w_knn <- as.matrix(kNN_obj[[1]]) # kNN adjacency matrix
 
 # ICAR model fitting
-MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "ICAR", nIter = 5000) 
+MM_ICAR <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "ICAR", nIter = 5000, verbose = F) 
 
 plot_estimates(MM_ICAR$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
@@ -239,7 +239,7 @@ We are fitting the NB model with the spatial horseshoe prior coupled with the kN
 
 
 ```{r fit SpaceBF NB model with horseshoe on kNN, echo = T, results = T, out.width="60%"}
-MM_HS_kNN <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "HS", nIter = 5000) 
+MM_HS_kNN <- SpaceBF(y1, y2, X = NULL, G = w_knn, which.model = "NB", which.prior = "HS", nIter = 5000, verbose = F) 
 
 plot_estimates(MM_HS_kNN$Beta[, -c(1:N)], y1, y2, coords[, 1:2], which.model = "NB")
 
