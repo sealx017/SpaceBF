@@ -22,7 +22,7 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
   
   # variable definitions
   y <- y1
-  K <- spam::as.spam(diag(scale(log1p(y2))[, 1]))       # design matrix with scaled log1p(y2)'s on the diagonal
+  K <- spam::as.spam(diag(scale(y2)[, 1]))       # design matrix with scaled y2's on the diagonal
   p <- ifelse(!is.null(X), ncol(X), 0)                  # number of covariates
   N <- length(y)                                        # number of samples
   p_mst <- length(which(G == 1))                        # twice the number of connections
