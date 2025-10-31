@@ -20,10 +20,10 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
           beta_thres = 10, nug_sig = NULL, which.r.sampler = "CRT", 
           scale_by_sigma = FALSE, verbose = "TRUE"){
   
-  # dimension checks
+  # model checks
   if(which.model != "NB" & which.model != "Gaussian"){
     print("Please provide a correct model choice: 'NB' or 'Gaussian'.")
-    break
+    break;
   }
   
   # dimension checks
