@@ -98,22 +98,12 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
       spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1 #*sigma2             # nug_sig1 and nug_sig2 are
-      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2 #*sigma2             # additional precision terms, i.e., 
-      
-      # B0_mat <- (B0_mat) + ID_mat 
-      # B1_mat <- (B1_mat) + KTK 
-      
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1            # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2            # additional precision terms
+
       ##################################################
       ## Algorithm 2nd step: sample beta's
       ##################################################
-      # beta0 <- as.vector(spam::rmvnorm.canonical(1, (y - diag_K*beta1)/sigma2, 
-      #                   B0_mat/sigma2))
-      # 
-      # beta1 <- as.vector(spam::rmvnorm.canonical(1, (KTy - diag_K*beta0)/sigma2, 
-      #                   B1_mat/sigma2))
-      # 
-      # 
       Q0 <- B0_mat + (1/sigma2) * ID_mat
       Q1 <- B1_mat + (1/sigma2) * KTK
       
@@ -185,12 +175,12 @@ Gauss_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       B1_mat[sorted_indices]  <- B1_mat[sorted_indices[, c(2, 1)]] <- -off_diag_val1   # elements of precision matrices
       spam::diag(B0_mat)  <-  spam::diag(B1_mat)  <- 0
       
-      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1*sigma2             # nug_sig1 and nug_sig2 are
-      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2*sigma2             # additional precision terms, i.e., 
+      spam::diag(B0_mat) <- abs(spam::rowSums(B0_mat)) + nug_sig1            # nug_sig1 and nug_sig2 are
+      spam::diag(B1_mat) <- abs(spam::rowSums(B1_mat)) + nug_sig2            # additional precision terms
       
-      B0_mat <- (B0_mat) + ID_mat 
+      B0_mat <- (B0_mat)*sigma2 + ID_mat 
       B1_star_mat <- spam::bdiag(spam::spam(T0, p, p),  B1_mat)
-      B1_star_mat <- (B1_star_mat) + KTK 
+      B1_star_mat <- (B1_star_mat)*sigma2 + KTK 
       
       ##################################################
       ## Algorithm 2nd step: sample beta's

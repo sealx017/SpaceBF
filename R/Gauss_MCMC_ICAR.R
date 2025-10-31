@@ -99,11 +99,10 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       ## Algorithm 1st step: update the ICAR precision matrices
       #############################################################################
 
-      ## beta0 precision: tau0*Qicar + diag(w) + ridge
-      B0_mat <- tau0 * Qicar
+      B0_mat <- tau0 * Qicar * sigma2          # cosmetic sigma2, gets cancelled
       spam::diag(B0_mat) <- spam::diag(B0_mat) + nug_sig1*sigma2 
 
-      B1_mat <- tau1 * Qicar 
+      B1_mat <- tau1 * Qicar * sigma2
       spam::diag(B1_mat) <- spam::diag(B1_mat) + nug_sig2*sigma2 
       
       B0_mat <- (B0_mat) + ID_mat 
@@ -163,11 +162,10 @@ Gauss_ICAR_model<-function(y1, y2, X = NULL, G, nIter = 5000, beta_thres = 10,
       ## Algorithm 1st step: update the ICAR precision matrices
       #############################################################################
       
-      ## beta0 precision: tau0*Qicar + diag(w) + ridge
-      B0_mat <- tau0 * Qicar
+      B0_mat <- tau0 * Qicar * sigma2
       spam::diag(B0_mat) <- spam::diag(B0_mat) + nug_sig1*sigma2 
       
-      B1_mat <- tau1 * Qicar 
+      B1_mat <- tau1 * Qicar * sigma2
       spam::diag(B1_mat) <- spam::diag(B1_mat) + nug_sig2*sigma2 
       
       B0_mat <- (B0_mat) + ID_mat 
