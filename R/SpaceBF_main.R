@@ -21,6 +21,12 @@ SpaceBF <-function(y1, y2, X = NULL, G, which.model = "NB", which.prior = "HS", 
           scale_by_sigma = FALSE, verbose = "TRUE"){
   
   # dimension checks
+  if(which.model != "NB" & which.model != "Gaussian"){
+    print("Please provide a correct model choice: 'NB' or 'Gaussian'.")
+    break
+  }
+  
+  # dimension checks
   if(!is.null(dim(y1))){
     y1 = c(y1[, 1])
     print("y1 is a matrix, first column is considered. ")
