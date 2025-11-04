@@ -83,16 +83,16 @@ local_res <- function(Beta, summary = "median"){
   if(summary == "median"){
     local_slope_dir <- apply(Beta, 2, median)     # median of the local-level beta's
   }else{
-    local_slope_dir <- apply(Beta, 1, mean)       # mean of the local-level beta's
+    local_slope_dir <- apply(Beta, 2, mean)       # mean of the local-level beta's
   }
   # compute local p-values
   local_pd <- apply(Beta, 2, function(x){min(1, 2*(1 - bayestestR::p_direction(x,
                 method = "KernSmooth")$pd))})     
   # check Geweke convergence
-  Geweke_local =  apply(Beta, 2, function(x) {abs(coda::geweke.diag(x, 0.1, 0.5)$z)})
+  Geweke_local <-  apply(Beta, 2, function(x) {abs(coda::geweke.diag(x, 0.1, 0.5)$z)})
   
   # create result output
-  local_res = data.frame(local.beta = local_slope_dir, 
+  local_res <- data.frame(local.beta = local_slope_dir, 
                           local.pval = local_pd,  
                           Geweke.local.beta = Geweke_local)
   
