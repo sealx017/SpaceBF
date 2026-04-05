@@ -30,9 +30,9 @@ Delauney network. 2. Horseshoe models now support general networks as
 well, please click the “README.md” file to view the documentation
 properly.**
 
-**Apr 5, 2026 update: 1. The paper has been published two months back in
-the journal GigaScience. Feel free to open an issue if you face any
-difficulty with using the software.**
+**Apr 5, 2026 update: The paper has been published two months back in
+GigaScience. Feel free to open an issue if you face any difficulty with
+using the software.**
 
 ## Install and load SpaceBF
 
