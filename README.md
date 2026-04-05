@@ -30,6 +30,10 @@ Delauney network. 2. Horseshoe models now support general networks as
 well, please click the “README.md” file to view the documentation
 properly.**
 
+**Apr 5, 2026 update: 1. The paper has been published two months back in
+the journal GigaScience. Feel free to open an issue if you face any
+difficulty with using the software.**
+
 ## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub. We
@@ -170,11 +174,11 @@ MM <- SpaceBF(y1, y2, X = NULL, G = mst.adjmat, which.model = "NB", nIter = 5000
 
 print(str(MM)) # check the returned list object
 # List of 5
-#  $ Beta    : num [1:2500, 1:586] -1.94 -1.75 -1.87 -1.57 -1.87 ...
-#  $ R       : num [1:2500, 1] 9.29 8.81 8.58 8.97 9.16 ...
-#  $ Lambda  : num [1:2500, 1:584] 0.0223 0.0159 0.3278 0.6954 0.7098 ...
-#  $ Tau     : num [1:2500, 1:2] 0.00354 0.00393 0.00339 0.00272 0.00234 ...
-#  $ Deviance: num [1:2500, 1] 1181 1183 1167 1167 1190 ...
+#  $ Beta    : num [1:2500, 1:586] -1.15 -1.08 -1.31 -1.17 -1.41 ...
+#  $ R       : num [1:2500, 1] 7.87 8.09 8.02 7.52 7.24 ...
+#  $ Lambda  : num [1:2500, 1:584] 104.646 4.076 1.538 1.699 0.785 ...
+#  $ Tau     : num [1:2500, 1:2] 0.000723 0.000732 0.000663 0.000808 0.000708 ...
+#  $ Deviance: num [1:2500, 1] 1193 1192 1196 1195 1195 ...
 # NULL
 ```
 
@@ -210,17 +214,17 @@ similar format.
 G_results <- global_res(MM$Beta[, -c(1:N)], summary = "median", local.p.ths = 0.9)
 print(G_results)  # test should be significant if nu is highly +ve or -ve
 #      global.beta  global.pval num.nonzero.local Geweke.global.beta
-# var1   0.3274669 3.509168e-06               202          0.8682875
+# var1   0.3236056 1.449761e-06               233           1.884637
 
 
 L_results <- local_res(MM$Beta[, -c(1:N)])
 print(L_results[1:5, ]) # printing the estimates and p-values for the first 5 locations
 #   local.beta local.pval Geweke.local.beta
-# 1  0.3299877 0.09477831         0.8919659
-# 2  0.3308921 0.08195055         0.8644156
-# 3  0.3299198 0.07670019         0.7966709
-# 4  0.3306464 0.11496412         0.6486339
-# 5  0.2995344 0.09324329         3.2589386
+# 1  0.3327926 0.08092767          2.693710
+# 2  0.3324412 0.06812697          2.217974
+# 3  0.3324183 0.05537753          2.238704
+# 4  0.3299426 0.08164987          1.464207
+# 5  0.3032085 0.05981317          1.203164
 ```
 
 ## Visualize the estimated slope surface along with the expression profiles
@@ -330,6 +334,7 @@ estimates and p-values.
 L_results_ICAR <- local_res(MM_ICAR$Beta[, -c(1:N)])
 
 plot_local_comparisons(L_results, L_results_ICAR)
+# Warning: package 'ggplot2' was built under R version 4.4.3
 ```
 
 <img src="README_files/figure-gfm/compare HS vs. ICAR-1.png" width="60%" />
@@ -380,9 +385,9 @@ plot_local_comparisons(L_results_ICAR, L_results_HS_kNN)
 
 ## References
 
-1\) Seal, S., & Neelon, B. (2025). SpaceBF: Spatial coexpression
+1\) Seal, S., & Neelon, B. (2026). SpaceBF: Spatial coexpression
 analysis using Bayesian Fused approaches in spatial omics datasets.
-bioRxiv, 2025-03.
+GigaScience, giag006.
 
 2\) K. Thrane, H. Eriksson, J. Maaskola, J. Hansson, and J. Lundeberg
 (2018). Spatially resolved transcriptomics enables dissection of genetic

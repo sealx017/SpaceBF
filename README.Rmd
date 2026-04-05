@@ -28,6 +28,9 @@ The *R* package implements the models proposed in the manuscript "SpaceBF: Spati
 
 **Oct 16, 2025 update: 1. ICAR version of the model is provided. It could be marginally faster for general spatial networks, such as k-NN or Delauney network. 2. Horseshoe models now support general networks as well, please click the "README.md" file to view the documentation properly.**
 
+**Apr 5, 2026 update: 1. The paper has been published two months back in the journal GigaScience. Feel free to open an issue if you face any difficulty with using the software.**
+
+
 ## Install and load SpaceBF
 
 We install and load the developmental version of SpaceBF from GitHub. We will need to install packages 'MERINGUE' (https://github.com/JEFworks-Lab/MERINGUE), 'SpaGene' (https://github.com/liuqivandy/SpaGene), and 'ComplexHeatmap' (https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html), used for comparison and visualization, manually as they are not available on CRAN.
@@ -263,7 +266,7 @@ plot_local_comparisons(L_results_ICAR, L_results_HS_kNN)
 
 ## References
 
-1\) Seal, S., & Neelon, B. (2025). SpaceBF: Spatial coexpression analysis using Bayesian Fused approaches in spatial omics datasets. bioRxiv, 2025-03.
+1\) Seal, S., & Neelon, B. (2026). SpaceBF: Spatial coexpression analysis using Bayesian Fused approaches in spatial omics datasets. GigaScience, giag006.
 
 2\) K. Thrane, H. Eriksson, J. Maaskola, J. Hansson, and J. Lundeberg (2018). Spatially resolved transcriptomics enables dissection of genetic heterogeneity in stage III cutaneous malignant melanoma. Cancer research, 78(20):5970–5979.
 
