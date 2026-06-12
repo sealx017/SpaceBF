@@ -15,6 +15,10 @@ SpaceBF
 </tr>
 </table>
 
+![GitHub Downloads](https://img.shields.io/github/downloads/sealx017/SpaceBF/total)
+![GitHub license](https://img.shields.io/github/license/sealx017/SpaceBF)
+![GitHub stars](https://img.shields.io/github/stars/sealx017/SpaceBF)
+
 The *R* package implements the models proposed in the manuscript
 “SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches
 in Spatial Omics Datasets.” It enables the analysis of spatially varying
