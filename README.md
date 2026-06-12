@@ -19,6 +19,7 @@ SpaceBF
 ![GitHub issues](https://img.shields.io/github/issues/sealx017/SpaceBF)
 ![GitHub license](https://img.shields.io/github/license/sealx017/SpaceBF)
 ![GitHub repo size](https://img.shields.io/github/repo-size/sealx017/SpaceBF)
+![GitHub Downloads](https://img.shields.io/github/downloads/sealx017/SpaceBF/total)
 
 The *R* package implements the models proposed in the manuscript
 “SpaceBF: Spatial Coexpression Analysis Using Bayesian Fused Approaches
